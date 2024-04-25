@@ -1,5 +1,5 @@
 # MangoPI MQ Pro (single core allwinner D1 risc-v based Pi Zero clone)
-Investigating the MangoPi MQ pro's IO capabilities
+Investigating the MangoPi MQ pro's IO capabilities when running Ubuntu 23.10, instead of the Armbian image it 'shipped' with. This is using the 'AllWinner Nezha' image (compatible with the MQ pro) from here: https://ubuntu.com/download/risc-v
 
 My unit is connected to a Waveshare LORA hat, I want to make it work.
 
