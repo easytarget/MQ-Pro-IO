@@ -1,0 +1,224 @@
+pin:   0,  PA0,  input
+pin:   1,  PA1,  input
+pin:   2,  PA2,  input
+pin:   3,  PA3,  input
+pin:   4,  PA4,  input
+pin:   5,  PA5,  input
+pin:   6,  PA6,  input
+pin:   7,  PA7,  input
+pin:   8,  PA8,  input
+pin:   9,  PA9,  input
+pin:  10, PA10,  input
+pin:  11, PA11,  input
+pin:  12, PA12,  input
+pin:  13, PA13,  input
+pin:  14, PA14,  input
+pin:  15, PA15,  input
+pin:  16, PA16,  input
+pin:  17, PA17,  input
+pin:  18, PA18,  input
+pin:  19, PA19,  input
+pin:  20, PA20,  input
+pin:  21, PA21,  input
+pin:  22, PA22,  input
+pin:  23, PA23,  input
+pin:  24, PA24,  input
+pin:  25, PA25,  input
+pin:  26, PA26,  input
+pin:  27, PA27,  input
+pin:  28, PA28,  input
+pin:  29, PA29,  input
+pin:  30, PA30,  input
+pin:  31, PA31,  input
+pin:  32,  PB0,  input, name: pin5 [gpio2/twi2-sck], used by: kernel
+pin:  33,  PB1,  input, name: pin3 [gpio1/twi2-sda], used by: kernel
+pin:  34,  PB2,  input
+pin:  35,  PB3,  input, name: pin38 [gpio24/i2s2-din]
+pin:  36,  PB4,  input, name: pin40 [gpio25/i2s2-dout]
+pin:  37,  PB5,  input, name: pin12 [gpio7/i2s-clk]
+pin:  38,  PB6,  input, name: pin35 [gpio22/i2s2-lrck]
+pin:  39,  PB7,  input
+pin:  40,  PB8,  input, name: pin8 [gpio4/uart0-txd], used by: kernel
+pin:  41,  PB9,  input, name: pin10 [gpio5/uart0-rxd], used by: kernel
+pin:  42, PB10,  input
+pin:  43, PB11,  input
+pin:  44, PB12,  input, name: pin15 [gpio9]
+pin:  45, PB13,  input
+pin:  46, PB14,  input
+pin:  47, PB15,  input
+pin:  48, PB16,  input
+pin:  49, PB17,  input
+pin:  50, PB18,  input
+pin:  51, PB19,  input
+pin:  52, PB20,  input
+pin:  53, PB21,  input
+pin:  54, PB22,  input
+pin:  55, PB23,  input
+pin:  56, PB24,  input
+pin:  57, PB25,  input
+pin:  58, PB26,  input
+pin:  59, PB27,  input
+pin:  60, PB28,  input
+pin:  61, PB29,  input
+pin:  62, PB30,  input
+pin:  63, PB31,  input
+pin:  64,  PC0,  input, used by: kernel
+pin:  65,  PC1,  input
+pin:  66,  PC2,  input, name: pin31 [gpio21], used by: kernel
+pin:  67,  PC3,  input, used by: kernel
+pin:  68,  PC4,  input, used by: kernel
+pin:  69,  PC5,  input, used by: kernel
+pin:  70,  PC6,  input, used by: kernel
+pin:  71,  PC7,  input, used by: kernel
+pin:  72,  PC8,  input
+pin:  73,  PC9,  input
+pin:  74, PC10,  input
+pin:  75, PC11,  input
+pin:  76, PC12,  input
+pin:  77, PC13,  input
+pin:  78, PC14,  input
+pin:  79, PC15,  input
+pin:  80, PC16,  input
+pin:  81, PC17,  input
+pin:  82, PC18,  input
+pin:  83, PC19,  input
+pin:  84, PC20,  input
+pin:  85, PC21,  input
+pin:  86, PC22,  input
+pin:  87, PC23,  input
+pin:  88, PC24,  input
+pin:  89, PC25,  input
+pin:  90, PC26,  input
+pin:  91, PC27,  input
+pin:  92, PC28,  input
+pin:  93, PC29,  input
+pin:  94, PC30,  input
+pin:  95, PC31,  input
+pin:  96,  PD0,  input
+pin:  97,  PD1,  input
+pin:  98,  PD2,  input
+pin:  99,  PD3,  input
+pin: 100,  PD4,  input
+pin: 101,  PD5,  input
+pin: 102,  PD6,  input
+pin: 103,  PD7,  input
+pin: 104,  PD8,  input
+pin: 105,  PD9,  input
+pin: 106, PD10,  input, used by: kernel
+pin: 107, PD11,  input, name: pin24 [gpio16/spi1-ce0], used by: kernel
+pin: 108, PD12,  input, name: pin23 [gpio15/spi1-clk], used by: kernel
+pin: 109, PD13,  input, name: pin19 [gpio12/spi1-mosi], used by: kernel
+pin: 110, PD14,  input, name: pin21 [gpio13/spi1-miso], used by: kernel
+pin: 111, PD15,  input, name: pin27 [gpio18/spi1-hold], used by: kernel
+pin: 112, PD16,  input, name: pin29 [gpio20/spi1-wp], used by: kernel
+pin: 113, PD17,  input
+pin: 114, PD18,  input
+pin: 115, PD19, output, used by: usbvbus
+pin: 116, PD20,  input, used by: usb0_vbus_det
+pin: 117, PD21,  input, used by: usb0_id_det
+pin: 118, PD22,  input
+pin: 119, PD23,  input, name: pin7 [gpio3/pwm]
+pin: 120, PD24,  input
+pin: 121, PD25,  input
+pin: 122, PD26,  input
+pin: 123, PD27,  input
+pin: 124, PD28,  input
+pin: 125, PD29,  input
+pin: 126, PD30,  input
+pin: 127, PD31,  input
+pin: 128,  PE0,  input
+pin: 129,  PE1,  input
+pin: 130,  PE2,  input
+pin: 131,  PE3,  input
+pin: 132,  PE4,  input
+pin: 133,  PE5,  input
+pin: 134,  PE6,  input
+pin: 135,  PE7,  input
+pin: 136,  PE8,  input
+pin: 137,  PE9,  input
+pin: 138, PE10,  input
+pin: 139, PE11,  input
+pin: 140, PE12,  input
+pin: 141, PE13,  input
+pin: 142, PE14,  input
+pin: 143, PE15,  input
+pin: 144, PE16,  input
+pin: 145, PE17,  input
+pin: 146, PE18,  input
+pin: 147, PE19,  input
+pin: 148, PE20,  input
+pin: 149, PE21,  input
+pin: 150, PE22,  input
+pin: 151, PE23,  input
+pin: 152, PE24,  input
+pin: 153, PE25,  input
+pin: 154, PE26,  input
+pin: 155, PE27,  input
+pin: 156, PE28,  input
+pin: 157, PE29,  input
+pin: 158, PE30,  input
+pin: 159, PE31,  input
+pin: 160,  PF0,  input, used by: kernel
+pin: 161,  PF1,  input, used by: kernel
+pin: 162,  PF2,  input, used by: kernel
+pin: 163,  PF3,  input, used by: kernel
+pin: 164,  PF4,  input, used by: kernel
+pin: 165,  PF5,  input, used by: kernel
+pin: 166,  PF6,  input, used by: cd
+pin: 167,  PF7,  input
+pin: 168,  PF8,  input
+pin: 169,  PF9,  input
+pin: 170, PF10,  input
+pin: 171, PF11,  input
+pin: 172, PF12,  input
+pin: 173, PF13,  input
+pin: 174, PF14,  input
+pin: 175, PF15,  input
+pin: 176, PF16,  input
+pin: 177, PF17,  input
+pin: 178, PF18,  input
+pin: 179, PF19,  input
+pin: 180, PF20,  input
+pin: 181, PF21,  input
+pin: 182, PF22,  input
+pin: 183, PF23,  input
+pin: 184, PF24,  input
+pin: 185, PF25,  input
+pin: 186, PF26,  input
+pin: 187, PF27,  input
+pin: 188, PF28,  input
+pin: 189, PF29,  input
+pin: 190, PF30,  input
+pin: 191, PF31,  input
+pin: 192,  PG0,  input, used by: kernel
+pin: 193,  PG1,  input, used by: kernel
+pin: 194,  PG2,  input, used by: kernel
+pin: 195,  PG3,  input, used by: kernel
+pin: 196,  PG4,  input, used by: kernel
+pin: 197,  PG5,  input, used by: kernel
+pin: 198,  PG6,  input, used by: kernel
+pin: 199,  PG7,  input, used by: kernel
+pin: 200,  PG8,  input, used by: kernel
+pin: 201,  PG9,  input, used by: kernel
+pin: 202, PG10,  input
+pin: 203, PG11,  input
+pin: 204, PG12, output, used by: reset
+pin: 205, PG13,  input
+pin: 206, PG14,  input
+pin: 207, PG15,  input
+pin: 208, PG16,  input
+pin: 209, PG17,  input
+pin: 210, PG18,  input
+pin: 211, PG19,  input
+pin: 212, PG20,  input
+pin: 213, PG21,  input
+pin: 214, PG22,  input
+pin: 215, PG23,  input
+pin: 216, PG24,  input
+pin: 217, PG25,  input
+pin: 218, PG26,  input
+pin: 219, PG27,  input
+pin: 220, PG28,  input
+pin: 221, PG29,  input
+pin: 222, PG30,  input
+pin: 223, PG31,  input
