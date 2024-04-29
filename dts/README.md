@@ -5,7 +5,7 @@ https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
 https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
 https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
 
-MangoPi/linux/arch/riscv/boot/dts/allwinner
+https://github.com/ners/MangoPi/tree/d2589d8211a2f9ae57d88f2e2c4d6a449d668f9e/MangoPi/linux/arch/riscv/boot/dts/allwinner
 
 ## Notes for re-generating MQ PRO device tree (`.dtb`)
 My notes
