@@ -5,6 +5,8 @@ https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
 https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
 https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
 
+MangoPi/linux/arch/riscv/boot/dts/allwinner
+
 ## Notes for re-generating MQ PRO device tree (`.dtb`)
 My notes
 * By default the Device Tree compiler (`/usr/bin/dtc`) should already be installed, as should the linux-headers for the kernel.
@@ -14,7 +16,7 @@ Example here is against the 'default' 6.8.0-31 linux kernel from the Ubuntu 24.0
 * clean the `dtspp` folder: `rm dtspp/*`
 * edit and run `bake.sh` to precompile the files against the latest linux-headers
 * cd into the `dtspp` folder and run: 
-  `dtc sun20i-d1-mangopi-mq-pro.dts > dtb-6.8.0-31-mqpro`
+  ```dtc sun20i-d1-mangopi-mq-pro.dts > dtb-6.8.0-31-mqpro```
   modify the version to reflect the current headers
 * move the `.dtb` file into the `/boot` folder:
   `sudo mv dtb-6.8.0-31-mqpro /boot/dtbs`
