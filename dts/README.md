@@ -1,6 +1,9 @@
 # Rebuild dts tree fo MQ pro..
 
-see: https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
+see:
+https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
+https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
+https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
 
 ## Notes for re-generating MQ PRO device tree (`.dtb`)
 My notes
@@ -36,4 +39,13 @@ Initially we will test the new dtb:
 ### Make this permanent in grub
 ToDo
 
+## Issues
+**No HDMI output** - this is either a blocker.. or fine for a headless system
+
+### Bonus
+The onboard (blue) status LED can be controlled via the sys tree:
+`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
+`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
+You can make it flash as wifi traffic is seen with:
+`sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"` 
 
