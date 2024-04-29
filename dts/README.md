@@ -7,6 +7,9 @@ https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
 
 https://github.com/ners/MangoPi/tree/d2589d8211a2f9ae57d88f2e2c4d6a449d668f9e/MangoPi/linux/arch/riscv/boot/dts/allwinner
 
+version from official armbian image? 
+https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
+
 ## Notes for re-generating MQ PRO device tree (`.dtb`)
 My notes
 * By default the Device Tree compiler (`/usr/bin/dtc`) should already be installed, as should the linux-headers for the kernel.
