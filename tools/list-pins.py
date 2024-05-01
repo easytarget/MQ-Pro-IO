@@ -18,9 +18,6 @@ muxindex = [pin[0] for pin in board.gpio]
 for pin in board.gpio:
     pin.append('')
 
-# start
-print('\n{} (dtb name: {})\n'.format(board.name, dtname))
-
 # Get the full pinmux list
 rawlist = run(['sudo', 'cat','/sys/kernel/debug/pinctrl/2000000.pinctrl/pinmux-pins'],stdout=PIPE,universal_newlines=True).stdout
 pinlist = rawlist.splitlines()[2:]
@@ -31,19 +28,25 @@ for line in pinlist:
     if int(pmux[1]) in muxindex:
         state = 'free' + ' (' + pmux[1] + ')'
         if pmux[3] == 'device':
-            state = pmux[6] + ' (' + pmux[4] + ')'
+            state = pmux[6] + ' (' + pmux[4] + ':' + pmux[1] + ')'
         elif pmux[3] == 'GPIO':
             state = 'gpio (' + pmux[4] + ')'
         board.gpio[muxindex.index(int(pmux[1]))][3] = state
 
 # work out column widths
 width = []
+total = 33
 for c in range(0, board.cols):
     wide = 0
     for p in range(c, len(board.gpio), board.cols):
         w = len(board.gpio[p][3])
         wide = w if w > wide else wide
     width.append(wide)
+    total += wide
+
+# heading
+header = '{} (dtb name: {})\n'.format(board.name, dtname)
+print('\n{}{}'.format(int((total-len(header))/2) * ' ', header))
 
 # Output result.
 for p in range(0, board.cols):
