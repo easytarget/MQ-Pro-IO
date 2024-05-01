@@ -71,7 +71,7 @@ UART2-TX,UART0-TX   PB0  ------ o o ------ PB1   UART0-RX,UART2-RX
          UART1-RTS  PB10 ------ o o -- GND
          UART1-CTS  PB11 ------ o o ------ PC0   UART2-TX
                     PB12 ------ o o -- GND
-         UART5-TX   PB6  ------ o o ------ PB2   UART4-TX
+         UART3-TX   PB6  ------ o o ------ PB2   UART4-TX
                     PD17 ------ o o ------ PB3   UART4-RX
                          GND -- o o ------ PB4   UART5-TX
 ```
