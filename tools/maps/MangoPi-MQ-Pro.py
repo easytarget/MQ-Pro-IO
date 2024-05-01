@@ -36,5 +36,5 @@ gpio = [
         [None, 39,  'gnd'], [  36, 40,  'PB4'],
         ]
 notes = ['I2C pins 2,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3',
-         'The onboard blue status LED is on PD18 [pwm2]']
+         'The onboard blue status LED is on PD18 [pwm2](pinmux:114)']
 
