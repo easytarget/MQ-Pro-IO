@@ -19,7 +19,7 @@ for pin in board.gpio:
     pin.append('')
 
 # start
-print('{} (dtb name: {})\n'.format(board.name, dtname))
+print('\n{} (dtb name: {})\n'.format(board.name, dtname))
 
 # Get the full pinmux list
 rawlist = run(['sudo', 'cat','/sys/kernel/debug/pinctrl/2000000.pinctrl/pinmux-pins'],stdout=PIPE,universal_newlines=True).stdout
@@ -29,7 +29,7 @@ pinlist = rawlist.splitlines()[2:]
 for line in pinlist:
     pmux = line.split()
     if int(pmux[1]) in muxindex:
-        state = 'free'
+        state = 'free' + ' (' + pmux[1] + ')'
         if pmux[3] == 'device':
             state = pmux[6] + ' (' + pmux[4] + ')'
         elif pmux[3] == 'GPIO':
@@ -46,6 +46,13 @@ for c in range(0, board.cols):
     width.append(wide)
 
 # Output result.
+for p in range(0, board.cols):
+    if p % 2 == 0:
+        print('  {}func   des  pin   '.format(' ' * (width[p] -4)), end='')
+    else:
+        print('    pin  des   func{}  '.format(' ' * (width[p] - 4)), end='')
+print()
+
 for l in range(0, len(board.gpio), board.cols):
     for p in range(l, l + board.cols):
         if board.gpio[p][2] is None:
