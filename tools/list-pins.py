@@ -49,13 +49,16 @@ header = '{} (dtb name: {})\n'.format(board.name, dtname)
 print('\n{}{}'.format(int((total-len(header))/2) * ' ', header))
 
 # Output result.
+
+# heading
 for p in range(0, board.cols):
     if p % 2 == 0:
         print('  {}func   des  pin   '.format(' ' * (width[p] -4)), end='')
     else:
         print('    pin  des   func{}  '.format(' ' * (width[p] - 4)), end='')
-print()
 
+# gpio pins
+print('\nGpio Header:'))
 for l in range(0, len(board.gpio), board.cols):
     for p in range(l, l + board.cols):
         if board.gpio[p][2] is None:
@@ -68,7 +71,12 @@ for l in range(0, len(board.gpio), board.cols):
             print(' o-- {:3} {:5} {}{}  '.format(str(board.gpio[p][1]), board.gpio[p][2], board.gpio[p][3], pad), end='')
     print()
 
-print()
-print('Notes:')
+# extras
+print('\nOther pins of interest:'))
+if len(board.gpio] > 40:
+    for p in board.gpio[29:]:
+        print(' o-- {:3} {:5} {}'.format(str(board.gpio[p][1]), board.gpio[p][2], board.gpio[p][3]), end='')
+
+print('\nNotes:')
 for l in board.notes:
     print('- ' + l)
