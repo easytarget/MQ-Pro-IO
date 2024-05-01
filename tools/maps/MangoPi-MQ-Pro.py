@@ -12,7 +12,8 @@
 '''
 
 name = 'MangoPI MQ Pro GPIO header'
-cols = 2
+cols = 2   # standard 40
+rows = 20  # pin connector
 gpio = [
         # The first 40 entries are the 40pin GPIO connector
         [None,  '3v3'], [None,   '5v'],

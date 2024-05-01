@@ -31,15 +31,15 @@ for line in pinlist:
             state = pmux[6] + ' (' + pmux[4] + ':' + pmux[1] + ')'
         elif pmux[3] == 'GPIO':
             state = 'gpio (' + pmux[4] + ')'
-        board.gpio[muxindex.index(int(pmux[1]))][3] = state
+        board.gpio[muxindex.index(int(pmux[1]))][2] = state
 
 # work out column widths
 width = []
-total = 33
+total = 33  # this includes all the 'fixed width' text
 for c in range(0, board.cols):
     wide = 0
     for p in range(c, len(board.gpio), board.cols):
-        w = len(board.gpio[p][3])
+        w = len(board.gpio[p][2])
         wide = w if w > wide else wide
     width.append(wide)
     total += wide
@@ -50,32 +50,36 @@ print('\n{}{}'.format(int((total-len(header))/2) * ' ', header))
 
 # Output result.
 
+print('Gpio Header:')
+pincount = board.cols * board.rows
 # heading
 for p in range(0, board.cols):
     if p % 2 == 0:
         print('  {}func   des  pin   '.format(' ' * (width[p] -4)), end='')
     else:
         print('    pin  des   func{}  '.format(' ' * (width[p] - 4)), end='')
+print()
 
 # gpio pins
-print('\nGpio Header:'))
-for l in range(0, len(board.gpio), board.cols):
+gpiopin = 1
+for l in range(0, pincount, board.cols):
     for p in range(l, l + board.cols):
         if board.gpio[p][2] is None:
             board.gpio[p][3] = ''
             board.gpio[p][2] = ''
-        pad = (width[p - l] - len(board.gpio[p][3])) * ' '
+        pad = (width[p - l] - len(board.gpio[p][2])) * ' '
         if p % 2 == 0:
-            print('  {}{} {:>5} {:>3} --o'.format(pad, board.gpio[p][3], board.gpio[p][2], str(board.gpio[p][1])), end='')
+            print('  {}{} {:>5} {:>3} --o'.format(pad, board.gpio[p][2], str(board.gpio[p][1]), str(gpiopin)), end='')
         else:
-            print(' o-- {:3} {:5} {}{}  '.format(str(board.gpio[p][1]), board.gpio[p][2], board.gpio[p][3], pad), end='')
+            print(' o-- {:3} {:5} {}{}  '.format(str(gpiopin), str(board.gpio[p][1]), board.gpio[p][2], pad), end='')
+        gpiopin += 1
     print()
 
 # extras
-print('\nOther pins of interest:'))
-if len(board.gpio] > 40:
-    for p in board.gpio[29:]:
-        print(' o-- {:3} {:5} {}'.format(str(board.gpio[p][1]), board.gpio[p][2], board.gpio[p][3]), end='')
+if len(board.gpio) > pincount:
+    print('\nOther gpio outputs of interest:')
+    for p in board.gpio[pincount:]:
+        print('-- {:5} - {}'.format(str(p[1]), p[2]))
 
 print('\nNotes:')
 for l in board.notes:
