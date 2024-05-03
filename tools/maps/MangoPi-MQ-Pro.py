@@ -39,5 +39,5 @@ gpio = [
         # Everything after this is listed in 'extras'
         [114, 'PD18: Blue Status Led'],
         ]
-notes = ['I2C pins 2,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3','The Status LED (PD18) is common with the LED_PWM pin on the DSI/LVDS output']
+notes = ['I2C pins 3,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3','The Status LED (PD18) is common with the LED_PWM pin on the DSI/LVDS output']
 
