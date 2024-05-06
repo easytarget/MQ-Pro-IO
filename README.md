@@ -58,6 +58,33 @@ Pins are organised into 7 'banks' (*PA*, *PB*, etc to *PG*) of up to 32 pins, bu
 
 There is a big table in the D1 datasheet that shows all possible functions each pin ccan assume.
 
+## GPIO Pin Muxing
+The **D1** SOC itself has 88 GPIO pins. 
+
+In the MQ PRO some of these GPIO pins are wired directly to peripherals on the board (eg SD card, Wifi chip, etc.) but that still leaves many free lines.
+
+The board has a 'standard' Raspberry Pi compatible 40 pin GPIO connector; 12 are reserved for Power lines, leaving 28 GPIO pins available for the user.
+
+Internally, the **D1** has a number of internal hardware interfaces for different signal types; 6xUART for serial, 2xSPI, 4xI2C(TWI), 3xI2Si/PCM (audio), 8xPWM, and some additional units for USB, HDMI, Audio, and more (see the Data sheet)
+
+The chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions.
+
+You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3.
+- A copy of this table is available here: [reference/d1-pins.pdf](reference/d1-pins.pdf)).
+
+Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. ADC input capable pins are limited, see the datasheet for more.
+
+### Internal interfaces
+The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
+
+`UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
+
+`TWI2` (`I2C2`) can be  mapped to the DVP connector (for touchscreen interfaces) via pins `PE12` and `PE13`.
+
+`TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
+
+`SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units)
+
 ## Default MQ-Pro mappings?
 The mapping as described in the schematics; showing the specific GPIO pin assignments envisioned by MangoPI on the MQ Pro GPIO connector.
 
@@ -88,31 +115,6 @@ Notes:
 - I2C pins 2,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3
 - The onboard blue status LED is on `PD18` [pwm2]
 ```
-
-## GPIO Pin Muxing
-The **D1** SOC itself has 88 GPIO pins. 
-
-In the MQ PRO some of these GPIO pins are wired directly to peripherals on the board (eg SD card, Wifi chip, etc.) but that still leaves many free lines.
-
-The board has a 'standard' Raspberry Pi compatible 40 pin GPIO connector; 12 are reserved for Power lines, leaving 28 GPIO pins available for the user.
-
-Internally, the **D1** has a number of internal hardware interfaces for different signal types; 6xUART for serial, 2xSPI, 4xI2C(TWI), 3xI2Si/PCM (audio), 8xPWM, and some additional units for USB, HDMI, Audio, and more (see the Data sheet)
-
-The chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions. You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3 (see the [references](./reference)' folder in this repo for a copy).
-
-Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. ADC input capable pins are limited, see the datasheet for more.
-
-### Internal interfaces
-The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
-
-`UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
-
-`TWI2` (`I2C2`) can be  mapped to the DVP connector (for touchscreen interfaces) via pins `PE12` and `PE13`.
-
-`TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
-
-`SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units)
-
 
 ### Pin Mapping Example; UART pins:
 The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector:
