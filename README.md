@@ -42,7 +42,7 @@ But if not; my somewhat limited notes on compiling the tree, plus a script that 
 # Enabling Bluetooth
 You need one of the new device trees provided (*except the original Nezha one*) since these correctly map UART1 onto the BT controller (with RTS/CTS).
 
-Once that is in place you still need the correct firmware for this particular device, a copy of this is in the [bluetooth firmware][./bt-fw] folder.
+Once that is in place you still need the correct firmware for this particular device, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
 * Copy the two firmware (`.bin`) files to `/usr/lib/firmware/` on the MQ PRO and reboot.
 
 # Allwinner D1 GPIO pins
@@ -92,7 +92,7 @@ The board has a 'standard' Raspberry Pi compatible 40 pin GPIO connector; 12 are
 
 Internally, the **D1** has a number of internal hardware interfaces for different signal types; 6xUART for serial, 2xSPI, 4xI2C(TWI), 3xI2Si/PCM (audio), 8xPWM, and some additional units for USB, HDMI, Audio, and more (see the Data sheet)
 
-The chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions. You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3 (see the 'references' folder in this repo for a copy).
+The chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions. You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3 (see the [references](./reference)' folder in this repo for a copy).
 
 Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. ADC input capable pins are limited, see the datasheet for more.
 
