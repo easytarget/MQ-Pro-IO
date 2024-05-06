@@ -1,7 +1,7 @@
 # MangoPI MQ Pro Device Trees for Bluetooth and GPIO
 ### The MQ pro is a single core allwinner D1 64bit 1Ghz, 1Gb risc-v based Pi-Zero-alike.
 
-This is a guide for enableing bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
+This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
 
 `24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates etc. As such it makes a very good choice for this board as a unattended headless device.
 
@@ -32,9 +32,8 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 # Device Trees
 TODO: general explanation,
 
-My pre-compiled device-trees are in the [here](./precompiled-trees). 
-- I still need to firm up and document how to deploy them!
-- I still need to work out how to make this all permanent and able to survive a kernel upgrade.
+My pre-compiled device-trees are in the [here](./precompiled-trees), along with install notes.
+- I may modify this in the future as I learn how to handle kernel upgrades properly, my current install method is probably sub-optimal. But it should work.
 
 ## Roll Your Own Device Tree
 Hopefully you can find what you want in the precompiled trees, or use the vanilla tree and dynamically create your devices on it via PinCTL.
@@ -46,6 +45,9 @@ You need one of the new device trees provided (*except the original Nezha one*) 
 
 Once that is in place you still need the correct firmware for this particular device, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
 * Copy the two firmware (`.bin`) files to `/usr/lib/firmware/` on the MQ PRO and reboot.
+
+# Using GPIO
+This is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinmux control via the `/sys/class/gpio` tree.
 
 # Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
