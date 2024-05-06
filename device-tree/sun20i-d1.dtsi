@@ -132,15 +132,27 @@
 			};
 
 			/omit-if-no-ref/
-			i2c0_pb10_pins: i2c0-pb10-pins {
-				pins = "PB10", "PB11";
+			i2c0_pg12_pins: i2c0-pg12-pins {
+				pins = "PG12", "PG13";
 				function = "i2c0";
 			};
 
 			/omit-if-no-ref/
-			i2c2_pb0_pins: i2c2-pb0-pins {
-				pins = "PB0", "PB1";
+			i2c1_pb4_pins: i2c1-pb4-pins {
+				pins = "PB4", "PB5";
+				function = "i2c1";
+			};
+
+			/omit-if-no-ref/
+			i2c2_pc0_pins: i2c2-pc0-pins {
+				pins = "PC0", "PC1";
 				function = "i2c2";
+			};
+
+			/omit-if-no-ref/
+			i2c3_pe16_pins: i2c3-pe16-pins {
+				pins = "PE16", "PE17";
+				function = "i2c3";
 			};
 
 			/omit-if-no-ref/
@@ -189,6 +201,18 @@
 				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
 				       "PE5", "PE6", "PE7", "PE8", "PE9";
 				function = "emac";
+			};
+
+			/omit-if-no-ref/
+			pwm0_pb5_pin: pwm0-pb5-pin {
+				pins = "PB5";
+				function = "pwm0";
+			};
+
+			/omit-if-no-ref/
+			pwm0_pb12_pin: pwm0-pb12-pin {
+				pins = "PB12";
+				function = "pwm0";
 			};
 
 			/omit-if-no-ref/
@@ -249,6 +273,42 @@
 			uart1_pg8_rts_cts_pins: uart1-pg8-rts-cts-pins {
 				pins = "PG8", "PG9";
 				function = "uart1";
+			};
+
+			/omit-if-no-ref/
+			uart2_pb0_pins: uart2-pb0-pins {
+				pins = "PB0", "PB1";
+				function = "uart2";
+			};
+
+			/omit-if-no-ref/
+			uart2_pc0_pins: uart2-pc0-pins {
+				pins = "PC0", "PC1";
+				function = "uart2";
+			};
+
+			/omit-if-no-ref/
+			uart3_pd10_pins: uart3-pd10-pins {
+				pins = "PD10", "PD11";
+				function = "uart3";
+			};
+
+			/omit-if-no-ref/
+			uart3_pd13_rts_cts_pins: uart3-pd13-rts-cts-pins {
+				pins = "PD13", "PD14";
+				function = "uart3";
+			};
+
+			/omit-if-no-ref/
+			uart4_pb2_pins: uart4-pb2-pins {
+				pins = "PB2", "PB3";
+				function = "uart4";
+			};
+
+			/omit-if-no-ref/
+			uart5_pb4_pins: uart5-pb4-pins {
+				pins = "PB4", "PB5";
+				function = "uart5";
 			};
 		};
 

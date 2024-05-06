@@ -5,6 +5,7 @@
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/leds/common.h>
+#include <dt-bindings/pwm/pwm.h>
 
 #include "sun20i-d1.dtsi"
 #include "sun20i-d1-common-regulators.dtsi"
@@ -16,7 +17,6 @@
 	aliases {
 		ethernet0 = &rtl8723ds;
 		mmc0 = &mmc0;
-		serial0 = &uart0;
 	};
 
 	chosen {
@@ -34,14 +34,14 @@
 		};
 	};
 
-	leds {
-		compatible = "pwm-leds";
 
-		led {
+	leds {
+		compatible = "gpio-leds";
+
+		led-0 {
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_STATUS;
-			max-brightness = <255>;
-			pwms = <&pwm 2 50000 0>;
+			gpios = <&pio 3 18 GPIO_ACTIVE_HIGH>; /* PD18 */
 		};
 	};
 
@@ -138,6 +138,36 @@
 	vcc-pe-supply = <&reg_avdd2v8>;
 };
 
+&spi1 {
+	pinctrl-0 = <&spi1_pd_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&i2c0 {
+	pinctrl-0 = <&i2c0_pg12_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+/*&i2c1 {
+	pinctrl-0 = <&i2c1_pb4_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};*/
+
+/*&i2c2 {
+	pinctrl-0 = <&i2c2_pc0_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};*/
+
+&i2c3 {
+	pinctrl-0 = <&i2c3_pe16_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
 &uart0 {
 	pinctrl-0 = <&uart0_pb8_pins>;
 	pinctrl-names = "default";
@@ -156,6 +186,38 @@
 		enable-gpios = <&pio 6 15 GPIO_ACTIVE_HIGH>; /* PG15 */
 		host-wake-gpios = <&pio 6 14 GPIO_ACTIVE_HIGH>; /* PG14 */
 	};
+};
+
+&uart2 {
+	pinctrl-0 = <&uart2_pc0_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+/*&uart3 {
+	uart-has-rtscts;
+	pinctrl-0 = <&uart3_pd10_pins>, <&uart3_pd13_rts_cts_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};*/
+
+&uart4 {
+	pinctrl-0 = <&uart4_pb2_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+/*&uart5 {
+	pinctrl-0 = <&uart5_pb4_pins>;
+	pinctrl-names = "default";
+	status = "okay";
+};*/
+
+&pwm {
+	//pinctrl-0 = <&pwm0_pb12_pin>, <&pwm2_pd18_pin>;
+	pinctrl-0 = <&pwm0_pb12_pin>;
+	pinctrl-names = "default";
+	status = "okay";
 };
 
 &usb_otg {
