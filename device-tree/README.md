@@ -1,30 +1,32 @@
 # Rebuild dts tree fo MQ pro..
 
-see:
-https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
-https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
-https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
+Start by `cd`'ing into this [device tree](device-tree) folder and editing your device tree.
 
-https://github.com/ners/MangoPi/tree/d2589d8211a2f9ae57d88f2e2c4d6a449d668f9e/MangoPi/linux/arch/riscv/boot/dts/allwinner
+You can use the generic `sun20i-d1-mangopi-mq-pro.generic.dts` already in the device tree folder as a basis, or start with one of the ones provided with my precompiled trees.
 
-version from official armbian image? 
-https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
+You may also need to modify `sun20i-d1.dtsi` since this is where pin mappings are declared; eg UART pin sets are defined in this include file and then used in the main tree file.
 
-## Notes for re-generating MQ PRO device tree (`.dtb`)
-My notes
-* By default the Device Tree compiler (`/usr/bin/dtc`) should already be installed, as should the linux-headers for the kernel.
+A full-on tutorial for device tree editing is far beyond the scope of both this document and author.
 
-### compile the mq-pro dts with the current kernel headers
+#### Terms
+* `.dts` is a top-level Device Tree Source file.
+* `.dtsi` is a include file for the `.dts`
+* `.dtb` is the binary compiled device tree, this is what we are building here, and is supplied to the kernel at boot time.
+
+## Building the MQ PRO device tree (`.dtb`)
+By default the Device Tree compiler (`/usr/bin/dtc`) should already be installed in Ubuntu server, as should the linux-headers for the kernel.
+
+## Compile the mq-pro dts with the current kernel headers
 Example here is against the 'default' 6.8.0-31 linux kernel from the Ubuntu 24.04 release
-* clean the `dtspp` folder: `rm dtspp/*`
-* edit and run `bake.sh` to precompile the files against the latest linux-headers
-* cd into the `dtspp` folder and run: 
-  ```dtc sun20i-d1-mangopi-mq-pro.dts > dtb-6.8.0-31-mqpro```
+* cd into the `dtspp` folder and  clean: `rm *.dts *.dtsi`
+* run `preprocess.sh` to precompile the files in the parent folder against the latest linux-headers.
+* still in the `dtspp` folder run: 
+  ```dtc sun20i-d1-mangopi-mq-pro.generic.dts > dtb-6.8.0-31-mqpro-generic.dtb```
   modify the version to reflect the current headers
 * move the `.dtb` file into the `/boot` folder:
-  `sudo mv dtb-6.8.0-31-mqpro /boot/dtbs`
-* make a link in `/boot` to this:
-  `sudo ln -s dtbs/dtb-6.8.0-31-mqpro /boot/dtb-mqpro`
+  `sudo mv dtb-6.8.0-31-mqpro-generic /boot/dtbs`
+* make a soft link in `/boot` to this:
+  `sudo ln -s dtbs/dtb-6.8.0-31-mqpro-generic.dtb /boot/dtb-mqpro`
 
 ### Set up Grub to test boot the new DTB
 Initially we will test the new dtb:
@@ -44,13 +46,21 @@ Initially we will test the new dtb:
 ### Make this permanent in grub
 ToDo
 
-## Issues
-**No HDMI output** - this is either a blocker.. or fine for a headless system
-
 ### Bonus
 The onboard (blue) status LED can be controlled via the sys tree:
-`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
-`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
-You can make it flash as wifi traffic is seen with:
-`sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"` 
 
+`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
+
+`sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
+
+You can make it flash as wifi traffic is seen with:
+
+`sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
+
+# references/links:
+https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
+https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
+https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
+https://github.com/ners/MangoPi/tree/d2589d8211a2f9ae57d88f2e2c4d6a449d668f9e/MangoPi/linux/arch/riscv/boot/dts/allwinner
+DTS version that is used in the official armbian image? 
+https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
