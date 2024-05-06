@@ -5,7 +5,7 @@ This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabil
 
 `24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates etc. As such it makes a very good choice for this board as a unattended headless device.
 
-## Install
+## Installing Ubuntu
 There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' which installs and boots on the MQ Pro.
 
 - Download the 'AllWinner Nezha' Ubuntu image (compatible with the MQ pro) from: https://ubuntu.com/download/risc-v
@@ -30,9 +30,11 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 ![My Hardware](waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 # Device Trees
-TODO: general explanation,
+A device tree is a file that defines the structure of the peripherals attached to, and provided by, the GPIO and internal busses on a SBC.
 
-My pre-compiled device-trees are in the [here](./precompiled-trees), along with install notes.
+It is used during boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary blob and loaded during boot.
+
+My pre-compiled device-trees for the MQ PRO are [here](./precompiled-trees), along with install notes.
 - I may modify this in the future as I learn how to handle kernel upgrades properly, my current install method is probably sub-optimal. But it should work.
 
 ## Roll Your Own Device Tree
