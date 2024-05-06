@@ -6,8 +6,7 @@
 
     Each gpio[] entry is a list with two items:
         [0] the pinmux pin number, or 'None' if a power pin
-        [1] the pin number on the connector
-        [2] a text description, or 'None' to omit the pin
+        [1] a text description, or 'None' to ignore the pin
 
 '''
 
