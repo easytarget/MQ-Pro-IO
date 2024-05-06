@@ -1,8 +1,35 @@
 # MangoPI MQ Pro (single core allwinner D1 risc-v based Pi Zero clone)
 Investigating the MangoPi MQ pro's IO capabilities when running Ubuntu 24.4.
-- Using the 'AllWinner Nezha' Ubuntu image (compatible with the MQ pro) from: https://ubuntu.com/download/risc-v
 
-My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default Nezha device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this be putting a better device tree on my MQ PRO
+## Install
+There is no specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' that installs and boots on the MQ Pro.
+
+- Download the 'AllWinner Nezha' Ubuntu image (compatible with the MQ pro) from: https://ubuntu.com/download/risc-v
+- Follow the instructions linked there to create a SD/TF card image and boot the MQ Pro using it.
+- WAIT!
+  - First boot is super-slow, it may take 10+ mins before you see anything on the HDMI console.
+  - If you have a USB-Serial adapter you can follow the boot via the serial console (`UART0` on the GPIO connector)
+- Eventually you can log in (`ubuntu`,`ubuntu`) and will be guided through changing password etc.
+- TODO: Wifi Setup
+- Run `apt update` then `apt upgrade` and install whatever else you need.
+
+The only thing not working out of the box is Bluetooth; this requires a Device Tree modification to fix. See below.
+
+I did try installing XFCE, it took 1+ hrs to log in and get a totally unusable desktop, the GPU support is obviously not there yet. Fortunately I have no plans to use a desktop. 
+- The HDMI/USB kbd and mouse console works well, install `gpm` to get a working mouse in it. I was able to attach and use a bluetooth kbd+mouse with no issues.
+
+My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default Nezha device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this be putting a better device tree on it.
+
+# Device Trees
+TODO:
+
+general explanation,
+
+links to the ones I have (hint: look in ./device-tree in this repo)
+
+document the trees I have made and provide
+
+work out how to make this all permanent and able to survive a kernel upgrade.
 
 ## Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
@@ -54,7 +81,7 @@ The chip has an internal 'pin muxer' to connect pins to signals. Each pin can co
 
 Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. ADC input capable pins are limited, see the datasheet for more.
 
-### In-Use interfaces
+### Internal interfaces
 The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 
 `UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
@@ -66,7 +93,7 @@ The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units)
 
 
-### Example; mapping uart pins:
+### Pin Mapping Example; UART pins:
 The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector:
 ```text
                         3v3  -- o o -- 5v
@@ -101,6 +128,7 @@ Notes:
 https://mangopi.org/mangopi_mqpro
 
 #### General Template for pins:
+This is for reference..
 ```text
 looking down, Pin1 is top left, Pin40 bottom right
 
