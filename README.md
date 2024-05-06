@@ -25,7 +25,7 @@ I experimentally installed XFCE, it took 1+ hrs to log in and get a totally unus
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default Nezha device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this be putting a better device tree on it.
 
-![My Hardware](reference/IMG_20240503_122325~3.jpg)
+![My Hardware](waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 # Device Trees
 TODO: general explanation,
