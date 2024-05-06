@@ -21,7 +21,7 @@ Each folder contains a `.dtb` file, which is the compiled device tree itself, pl
 ## SunXI
 [Vanilla, unpopulated, upstream](./sunxi)
 * Has the console uart, nothing more
-* *26 unassigned GPIO pins!*
+  *26 unassigned GPIO pins!*
 
 ## AllWinner Nezha
 [DO NOT USE](./allwinner-nezha)
@@ -35,17 +35,6 @@ Clone this repo:
 $ git clone https://github.com/easytarget/MQ-Pro-IO.git
 $ cd MQ-Pro-IO
 ```
-
-# Examining the current DTB pin mappings:
-In the [tools](../tools) folder there is a python script called `list-pins.py`.
-
-To run it you need to be in that directory, then run:
-`python3 list-pins.py MangoPi-MQ-Pro`
-* This produces the same map I use in the documentation and `.gpio` files in the folders above.
-* The data used to assemble the `.gpio` map files identifies which interface a pin is attached to, but not it's specific function for the interface.
-  * eg it can say 'pinX and pinY are mapped to a UART', but cannot identify which pin is the TX and which is the RX for it; a limitation of the data, my apologies..
-  * You therefore need to reference the [D1 pin mapping table](../reference/d1-pins.pdf) to get the exact functions for pins when running this for yourself.
-* The `.gpio` files uploaded here *have* been manually edited to note full pin function for convenience.
 
 # Install the Device Tree
 Installing is, in principle, simple. 
@@ -68,13 +57,25 @@ Finally, edit the `/boot/grub/grub.cfg` file to use the new DTB for the default 
 
 Reboot!
 
-After rebooting you can re-run **list-pins.py** from above to verify the new mappings.
+After rebooting you can run **list-pins.py** (see below) to verify the new mappings.
 
 If you have errors rebooting (maybe a corrupt file if you rebuilt it etc..) you need to either boot using a USB serial adapter on the console pins and select the recovery image,  or, in grub, edit the command and revert to the generic `/boot/dtb`. 
 As a last resort you may have to remove the SD card, mount the `/boot` partition and edit `grub/grub.cfg` there.
 * !! The 'default' dtb supplied by ubuntu should always be softlinked as `/boot/dtb`, so putting `devicetree      /boot/dtb` in grub in place of the custom `.dtb` should work and is predictable (no version numbers etc).
 
-## Making Permanent:
+* 
+## Examining the DTB pin mappings:
+In the [tools](../tools) folder there is a python script called `list-pins.py`.
+
+To run it you need to be in that directory, then run:
+`python3 list-pins.py MangoPi-MQ-Pro`
+* This produces the same map I use in the documentation and `.gpio` files in the folders above.
+* The data used to assemble the `.gpio` map files identifies which interface a pin is attached to, but not it's specific function for the interface.
+  * eg it can say 'pinX and pinY are mapped to a UART', but cannot identify which pin is the TX and which is the RX for it; a limitation of the data, my apologies..
+  * You therefore need to reference the [D1 pin mapping table](../reference/d1-pins.pdf) to get the exact functions for pins when running this for yourself.
+* The `.gpio` files uploaded here *have* been manually edited to note full pin function for convenience.
+
+# Making Permanent:
 (As Root) Edit: `/etc/grub.d/10_linux` line 458 to say:
 ```
   for i in "dtb-mqpro" "dtb-${version}" "dtb-${alt_version}" "dtb"; do
