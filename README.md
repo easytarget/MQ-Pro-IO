@@ -1,7 +1,9 @@
-# MangoPI MQ Pro (single core allwinner D1 risc-v based Pi Zero clone)
-Investigating the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
+# MangoPI MQ Pro Device Trees for Bluetooth and GPIO
+### The MQ pro is a single core allwinner D1 64bit 1Ghz, 1Gb risc-v based Pi-Zero-alike.
 
-`24.04` is a LTS+ relesae from Ubuntu, and should provide 5+ years of updates etc. As such it makes a very good choice for this board, no other Distro provides this yet.
+This is a guide for enableing bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
+
+`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates etc. As such it makes a very good choice for this board as a unattended headless device.
 
 ## Install
 There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' which installs and boots on the MQ Pro.
