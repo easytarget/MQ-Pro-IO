@@ -6,8 +6,8 @@ Gpio Header:
                3v3   1 --o o-- 2   5v                               
   free (205)  PG13   3 --o o-- 4   5v                               
   free (204)  PG12   5 --o o-- 6   gnd                              
-   free (39)   PB7   7 --o o-- 8   PB8   uart0 (2500000.serial:40)  
-               gnd   9 --o o-- 10  PB9   uart0 (2500000.serial:41)  
+   free (39)   PB7   7 --o o-- 8   PB8   uart0.tx (2500000.serial:40)  
+               gnd   9 --o o-- 10  PB9   uart0.rx (2500000.serial:41)  
   free (117)  PD21  11 --o o-- 12  PB5   free (37)                  
   free (118)  PD22  13 --o o-- 14  gnd                              
    free (32)   PB0  15 --o o-- 16  PB1   free (33)                  

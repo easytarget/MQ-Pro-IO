@@ -56,7 +56,7 @@ The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins
 
 Pins are organised into 7 'banks' (*PA*, *PB*, etc to *PG*) of up to 32 pins, but most banks have fewer pins.
 
-There is a big table in the D1 datasheet that shows all possible functions each pin ccan assume.
+There is a big table in the D1 datasheet that shows all possible functions each pin can assume.
 
 ## GPIO Pin Muxing
 The **D1** SOC itself has 88 GPIO pins. 
@@ -67,7 +67,7 @@ The board has a 'standard' Raspberry Pi compatible 40 pin GPIO connector; 12 are
 
 Internally, the **D1** has a number of internal hardware interfaces for different signal types; 6xUART for serial, 2xSPI, 4xI2C(TWI), 3xI2Si/PCM (audio), 8xPWM, and some additional units for USB, HDMI, Audio, and more (see the Data sheet)
 
-The chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions.
+The **D1** chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions.
 
 You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3.
 - A copy of this table is available here: [reference/d1-pins.pdf](reference/d1-pins.pdf)).

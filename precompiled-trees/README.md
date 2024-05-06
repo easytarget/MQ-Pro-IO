@@ -1,10 +1,6 @@
 # Precompiled device trees:
 Each folder contains a `.dtb` file, which is the compiled device tree itself, plus a `.dts` with the original source and a `.gpio` file showing the GPIO pin mappings.
 
-The tool/data used to assemble the `.gpio` map files identifies which interface a pin is attached to, but not it's specific function for the interface. 
-* eg it can say 'pinX and pinY are mapped to a UART', but cannot identify which pin is the TX and which is the RX for it; a limitation of the data, my apologies..
-* You therefore need to reference the D1 pin mapping table to get the exact functions for pins.
-* A copy of this table is available here: [reference/d1-pins.pdf](../reference/d1-pins.pdf)).
 
 ## Generic
 [The generic device tree I will use in my project, suitable for many occasions](./generic)
@@ -46,6 +42,10 @@ In the [tools](../tools) folder there is a python script called `list-pins.py`.
 To run it you need to be in that directory, then run:
 `python3 list-pins.py MangoPi-MQ-Pro`
 * This produces the same map I use in the documentation and `.gpio` files in the folders above.
+* The data used to assemble the `.gpio` map files identifies which interface a pin is attached to, but not it's specific function for the interface.
+  * eg it can say 'pinX and pinY are mapped to a UART', but cannot identify which pin is the TX and which is the RX for it; a limitation of the data, my apologies..
+  * You therefore need to reference the [D1 pin mapping table](../reference/d1-pins.pdf) to get the exact functions for pins when running this for yourself.
+* The `.gpio` files uploaded here *have* been manually edited to note full pin function for convenience.
 
 # Install the Device Tree
 Installing is, in principle, simple. 
