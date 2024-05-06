@@ -1,6 +1,11 @@
 # Precompiled device trees:
 Each folder contains a `.dtb` file, which is the compiled device tree itself, plus a `.dts` with the original source and a `.gpio` file showing the GPIO pin mappings.
 
+The tool/data used to assemble the `.gpio` map files identifies which interface a pin is attached to, but not it's specific function for the interface. 
+* eg it can say 'pinX and pinY are mapped to a UART', but cannot identify which pin is the TX and which is the RX for it; a limitation of the data, my apologies..
+* You therefore need to reference the D1 pin mapping table to get the exact functions for pins.
+* A copy of this table is available here: [reference/d1-pins.pdf](../reference/d1-pins.pdf)).
+
 ## Generic
 [The generic device tree I will use in my project, suitable for many occasions](./generic)
 * Has 2x UART (plus the console uart), 2x I2C. 1xSPI
