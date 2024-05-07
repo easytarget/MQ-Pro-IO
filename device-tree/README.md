@@ -44,7 +44,7 @@ Initially we will test the new dtb:
 * you should see `model = "MangoPi MQ Pro"` at the end
 
 ### Make this permanent in grub
-ToDo
+This is covered in the 'precompiled trees' readme [here](../precompiled-trees#making-permanent).
 
 ### Bonus
 The onboard (blue) status LED can be controlled via the sys tree:
