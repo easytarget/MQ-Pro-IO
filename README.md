@@ -85,37 +85,6 @@ The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 
 `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units)
 
-## Default MQ-Pro mappings?
-The mapping as described in the schematics; showing the specific GPIO pin assignments envisioned by MangoPI on the MQ Pro GPIO connector.
-
-**Not what you get by default with Ubuntu**
-```text
-                 3v3  -  1  o o   2 -  5v
-     i2c0 SDA   PG13 --  3  o o   4 -  5v
-     i2c0 SDL   PG12 --  5  o o   6 -  GND
-                PB7  --  7  o o   8 -- PB8    uart0 TX
-                 GND  -  9  o o  10 -- PB9    uart0 RX
-                PD21 -- 11  o o  12 -- PB5    i2s CLK [pwm0]
-                PD22 -- 13  o o  14 -  GND
-       [pwm3]   PB0  -- 15  o o  16 -- PB1    [pwm4]
-                 3v3  - 17  o o  18 -- PD14   spi1 HOLD
-    spi1 MOSI   PD12 -- 19  o o  20 -  GND
-    spi1 MISO   PD13 -- 21  o o  22 -- PC1    uart2 RX
-    spi1 SCLK   PD11 -- 23  o o  24 -- PD10   spi1 CS
-                 GND  - 25  o o  26 -- PD15   spi1 WS
-     i2c3 SDA   PE17 -- 27  o o  28 -- PE16   i2c3 SCL 
-                PB10 -- 29  o o  30 -  GND
-                PB11 -- 31  o o  32 -- PC0    uart2 TX
-                PB12 -- 33  o o  34 -  GND
-[pwm1] i2s FS   PB6  -- 35  o o  36 -- PB2
-                PD17 -- 37  o o  38 -- PB3    i2s DI0
-                 GND  - 39  o o  40 -- PB4    i2s DO
-
-Notes:
-- I2C pins 2,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3
-- The onboard blue status LED is on `PD18` [pwm2]
-```
-
 ### Pin Mapping Example; UART pins:
 The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector:
 ```text
