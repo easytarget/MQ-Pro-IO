@@ -1,0 +1,7 @@
+[Unit]
+Description=MQ Pro status LED setup
+After=network.target
+[Service]
+ExecStart=/bin/sh -c '/usr/bin/echo phy0rx > /sys/class/leds/blue:status/trigger'
+[Install]
+WantedBy=default.target
