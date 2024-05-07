@@ -63,7 +63,6 @@ If you have errors rebooting (maybe a corrupt file if you rebuilt it etc..) you 
 As a last resort you may have to remove the SD card, mount the `/boot` partition and edit `grub/grub.cfg` there.
 * !! The 'default' dtb supplied by ubuntu should always be softlinked as `/boot/dtb`, so putting `devicetree      /boot/dtb` in grub in place of the custom `.dtb` should work and is predictable (no version numbers etc).
 
-* 
 ## Examining the DTB pin mappings:
 In the [tools](../tools) folder there is a python script called `list-pins.py`.
 
@@ -71,7 +70,7 @@ To run it you need to be in that directory, then run:
 `python3 list-pins.py MangoPi-MQ-Pro`
 * This produces the same map I use in the documentation and `.gpio` files in the folders above.
 * The data used to assemble the `.gpio` map files identifies which interface a pin is attached to, but not it's specific function for the interface.
-  * eg it can say 'pinX and pinY are mapped to a UART', but cannot identify which pin is the TX and which is the RX for it; a limitation of the data, my apologies..
+  * eg it can say 'pinX and pinY are mapped to UART2', but cannot identify which pin is the TX and which is the RX; a limitation of the data, my apologies..
   * You therefore need to reference the [D1 pin mapping table](../reference/d1-pins.pdf) to get the exact functions for pins when running this for yourself.
 * The `.gpio` files uploaded here *have* been manually edited to note full pin function for convenience.
 
