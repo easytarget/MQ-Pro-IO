@@ -3,11 +3,16 @@
 
 This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
 
-`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates etc. As such it makes a very good choice for this board as a unattended headless device.
+`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a very good choice for an unattended headless device.
 
 ## Installing Ubuntu
-There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' which installs and boots on the MQ Pro.
+There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' which installs and boots on the MQ Pro with almost everything working.
 
+Please refer to the Ubuntu documentation and forums if struggling with this.
+- I had issues getting a successful first boot with a cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
+- I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
+
+### steps:
 - Download the 'AllWinner Nezha' Ubuntu image (compatible with the MQ pro) from: https://ubuntu.com/download/risc-v
 - Follow the instructions linked there to create a SD/TF card image and boot the MQ Pro using it.
 - WAIT!
@@ -32,31 +37,48 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 # Device Trees
 A device tree is a file that defines the structure of the peripherals attached to, and provided by, the GPIO and internal busses on a SBC.
 
-It is used during boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary blob and loaded during boot.
+It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
+
+In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up. 
+
+We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Nezha) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
 
 My pre-compiled device-trees for the MQ PRO are [here](./precompiled-trees), along with install notes.
 - I may modify this in the future as I learn how to handle kernel upgrades properly, my current install method is probably sub-optimal. But it should work.
 
 ## Roll Your Own Device Tree
-Hopefully you can find what you want in the precompiled trees, or use the vanilla tree and dynamically create your devices on it via PinCTL.
+Hopefully you can find what you want in the precompiled trees, or use the vanilla tree and dynamically create your devices on it via `pinctl`.
 
 But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [device-tree](./device-tree) folder.
 
-# Enabling Bluetooth
-You need one of the new device trees provided (*except the original Nezha one*) since these correctly map UART1 onto the BT controller (with RTS/CTS).
+# Using the new tree
 
-Once that is in place you still need the correct firmware for this particular device, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
+## Enabling Bluetooth
+You need one of the new device trees provided here; these correctly map UART1 onto the BT controller (with RTS/CTS).
+
+Once that is in place you still need the correct firmware for the bluetooth adapter, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
 * Copy the two firmware (`.bin`) files to `/usr/lib/firmware/` on the MQ PRO and reboot.
 
-# Using GPIO
-This is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinmux control via the `/sys/class/gpio` tree.
+## Status LED
+The onboard (blue) status LED can now be controlled via the sys tree:
 
-# Allwinner D1 GPIO pins
+`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
+
+`sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
+
+You can make it flash as wifi traffic is seen with:
+
+`sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
+
+## Using GPIO
+Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
+
+There are many tutorials on doing this online that give a better explanation than I can here
+
+## Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
 
 Pins are organised into 7 'banks' (*PA*, *PB*, etc to *PG*) of up to 32 pins, but most banks have fewer pins.
-
-There is a big table in the D1 datasheet that shows all possible functions each pin can assume.
 
 ## GPIO Pin Muxing
 The **D1** SOC itself has 88 GPIO pins. 
@@ -72,7 +94,7 @@ The **D1** chip has an internal 'pin muxer' to connect pins to signals. Each pin
 You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3.
 - A copy of this table is available here: [reference/d1-pins.pdf](reference/d1-pins.pdf)).
 
-Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. ADC input capable pins are limited, see the datasheet for more.
+Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. PWM and ADC input capable pins are limited, see the datasheet for more.
 
 ### Internal interfaces
 The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
@@ -83,7 +105,7 @@ The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 
 `TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
 
-`SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units)
+`SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector.
 
 ### Pin Mapping Example; UART pins:
 The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector:
@@ -121,4 +143,3 @@ Online:
 * https://mangopi.org/mangopi_mqpro
 * https://linux-sunxi.org/MangoPi_MQ-Pro
 * https://github.com/boosterl/awesome-mango-pi-mq-pro
-
