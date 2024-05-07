@@ -107,8 +107,10 @@ The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 
 `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector.
 
-### Pin Mapping Example; UART pins:
-The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector:
+### Pin Mapping EXAMPLE
+The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector.
+
+When creating a device tree you can create any pin mapping that conforms to this:
 ```text
                         3v3  -- o o -- 5v
          UART1-RX   PG13 ------ o o -- 5v
@@ -133,11 +135,12 @@ UART2-TX,UART0-TX   PB0  ------ o o ------ PB1   UART0-RX,UART2-RX
 ```
 Notes:
 - `UART0` maps by default to gpio pins 8 and 10 (*PB8* and *PB9*) is the used for the system console by default at boot and you should expect data on it during boot even if you disable it in the device tree as the kernel starts.
+- `UART1` is normally used by the bluetooth adapter, enabling it here will disable bluetooth.
 - `UART1` and `UART3` have flow control lines (rts and cts) available
 - some pins do not map to any UART devices
 
 ## References
-I have a copy of the MQ PRO schematic and the AllWinner D1 datasheet in the [references](./reference) folder.
+There are reference copies of the MQ PRO schematic and the AllWinner D1 datasheet in the [references](./reference) folder.
 
 Online:
 * https://mangopi.org/mangopi_mqpro
