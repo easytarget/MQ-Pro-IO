@@ -15,7 +15,7 @@ else
 fi
 
 for file in `ls {*.dts,*.dtsi}`; do
-    echo "Processing $file to ${file##*/}"
+    echo "Processing $file to $revision/${file##*/}"
     cpp -I/usr/src/linux-headers-$revision/include/ -nostdinc -undef -x assembler-with-cpp $file > $revision/${file##*/}
 done
 
