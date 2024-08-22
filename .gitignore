@@ -1,5 +1,6 @@
 # specific to this repo
 device-tree/dtspp/*.dts*
+source/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
