@@ -1,4 +1,34 @@
-# Rebuild dts tree fo MQ pro..
+# NOTE
+# Being refactored at the moment. I want to make sure the dtsi and generic image are taken for currnet kernel;
+
+## Ignore this: (until I properly update, some of this needs moving to source/README.md)
+
+```console
+# Enable source repos:
+# As root edit the file: /etc/apt/sources.list.d/ubuntu.sources
+# There should be two repo definitions, for both find the lines that say:
+Types: deb
+# add 'deb-src' so it now says
+Types: deb deb-src
+# Save and exit editor.
+
+# run
+apt update
+# you should see a load of new (source) repos being updated.
+# - adding all these source repos slows apt down,
+#   not much that can be done about this on such a slow machine.
+
+# Now we can install the linux sources
+cd source
+apt source linux-riscv
+# Go for a coffee.. ignore the 'git clone' suggestion.
+# This will take some time, and place the sources in the current
+# directory.
+# It will use ~1.6Gb of space.. so be prepared..
+
+```
+
+# Rebuild dts tree for MQ pro..
 
 Start by `cd`'ing into this [device tree](device-tree) folder and editing your device tree.
 
