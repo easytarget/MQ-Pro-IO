@@ -2,8 +2,8 @@
 Each folder contains a `.dtb` file, which is the compiled device tree itself, plus a `.dts` with the original source and a `.gpio` file showing the GPIO pin mappings.
 
 
-## Generic
-[The generic device tree I will use in my project, suitable for many occasions](./generic)
+## Common
+[The common (generic) device tree I will use in my project, suitable for many occasions](./common)
 * Has 2x UART (plus the console uart), 2x I2C. 1xSPI
 * 12 unassigned GPIO pins
 
@@ -37,7 +37,7 @@ $ cd MQ-Pro-IO
 ```
 
 # Install the Device Tree
-Installing is, in principle, simple. 
+Installing is, in principle, simple.
 * Clone this repo on to the MQ pro and, as root, copy the desired `.dtb` file to the `/boot/dbts` folder.
 * Then make a soft link in the root of the /boot folder named `dtb-mqpro` that points to the file you just copied.
 ```console
