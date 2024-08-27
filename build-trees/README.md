@@ -4,6 +4,9 @@
 ## Ignore this: (until I properly update, some of this needs moving to source/README.md)
 
 ```console
+# Install build-essentials (lots of packages, will take some time)
+apt install build-essentials
+
 # Enable source repos:
 # As root edit the file: /etc/apt/sources.list.d/ubuntu.sources
 # There should be two repo definitions, for both find the lines that say:
@@ -12,19 +15,24 @@ Types: deb
 Types: deb deb-src
 # Save and exit editor.
 
-# run
+# As root, run
 apt update
 # you should see a load of new (source) repos being updated.
 # - adding all these source repos slows apt down,
 #   not much that can be done about this on such a slow machine.
 
 # Now we can install the linux sources
+# This can be done as a normal user
+# note that the command used here `apt source` will download the sources to the current working folder, not a fixed location.
+
 cd source
 apt source linux-riscv
 # Go for a coffee.. ignore the 'git clone' suggestion.
 # This will take some time, and place the sources in the current
 # directory.
 # It will use ~1.6Gb of space.. so be prepared..
+
+# If you re-run the command in this folder it will only update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
 
 ```
 

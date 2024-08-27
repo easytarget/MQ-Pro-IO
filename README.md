@@ -70,6 +70,8 @@ You can make it flash as wifi traffic is seen with:
 
 `sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
 
+You can make this permanent by, as root, copying `tools/mqpro-status-led.service` to `/etc/systemd/system/`, running `systemctl daemon-reload` then `systemctl enable --now mqpro-status-led.service`.
+
 ## Using GPIO
 Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
 
