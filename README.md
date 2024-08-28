@@ -56,8 +56,9 @@ But if not; my somewhat limited notes on compiling the tree, plus a script that 
 ## Enabling Bluetooth
 You need one of the new device trees provided here; these correctly map UART1 onto the BT controller (with RTS/CTS).
 
-Once that is in place you still need the correct firmware for the bluetooth adapter, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
+Once that is in place you also need the correct firmware for the bluetooth adapter, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
 * Copy the two firmware (`.bin`) files to `/usr/lib/firmware/` on the MQ PRO and reboot.
+* Install *Bluez* (`sudo apt install bluez`) and then you can use `bluetoothctl` to configure and connect
 
 ## Status LED
 The onboard (blue) status LED can now be controlled via the sys tree:
