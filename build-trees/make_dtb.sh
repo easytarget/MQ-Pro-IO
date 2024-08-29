@@ -4,7 +4,7 @@
 
 dtc=/usr/bin/dtc
 revision=`/usr/bin/uname -r`
-trees=../precompiled-trees
+# alt=../alt-trees -- disabled auto building of all alt trees, better to do individually
 
 echo "Compiling against headers for $revision"
 
@@ -16,14 +16,20 @@ else
     mkdir "$revision"
 fi
 
-echo "Copying custom dts sources to build root"
-for dts in `ls -d $trees/*/*.dts`; do
-    echo "$dts"
-    cp $dts .
+#echo "Copying custom dts sources to build root"
+#for dts in `ls -d $alt/*/*.dts`; do
+#    echo "$dts"
+#    cp $dts .
+#done
+
+echo "Precompiling all includes in build root into $revision build directory"
+for file in `ls *.dtsi`; do
+    echo "Processing $file to $revision/${file##*/}"
+    cpp -I/usr/src/linux-headers-$revision/include/ -nostdinc -undef -x assembler-with-cpp $file > $revision/${file##*/}
 done
 
-echo "Precompiling all includes and sources in build root into $revision build directory"
-for file in `ls {*.dts,*.dtsi}`; do
+echo "Precompiling all sources in build root into $revision build directory"
+for file in `ls *.dts`; do
     echo "Processing $file to $revision/${file##*/}"
     cpp -I/usr/src/linux-headers-$revision/include/ -nostdinc -undef -x assembler-with-cpp $file > $revision/${file##*/}
 done
@@ -32,6 +38,6 @@ echo "Compiling all device tree sources in $revision build directory"
 cd $revision
 for file in `ls *.dts`; do
     out=${file/.dts/.dtb}
-    echo "Compiling: $revision/$file > $revision/$out"
-    $dtc $file > $out
+    echo "Compiling: $revision/$file > $revision/$revision-$out"
+    $dtc $file > $revision-$out
 done
