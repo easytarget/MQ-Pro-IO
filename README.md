@@ -3,31 +3,20 @@
 
 This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
 
-`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a very good choice for an unattended headless device.
+`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a good choice for an unattended headless device.
 
 ## Installing Ubuntu
-There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' which installs and boots on the MQ Pro with almost everything working.
+There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'FIX!!!' which installs and boots on the MQ Pro with almost everything working.
 
 Please refer to the Ubuntu documentation and forums if struggling with this.
 - I had issues getting a successful first boot with a cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
 - I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
 
+There is no HDMI output (console) with the image.
+- EXPAND!!!
+
 ### steps:
-- Download the 'AllWinner Nezha' Ubuntu image (compatible with the MQ pro) from: https://ubuntu.com/download/risc-v
-- Follow the instructions linked there to create a SD/TF card image and boot the MQ Pro using it.
-- WAIT!
-  - First boot is super-slow, it may take 10+ mins before you see anything on the HDMI console.
-  - If you have a USB-Serial adapter you can follow the boot via the serial console (`UART0` on the GPIO connector)
-- Eventually you can log in (`ubuntu`,`ubuntu`) and will be guided through changing password etc.
-- TODO: Wifi Setup
-- Run `apt update` then `apt upgrade` and install whatever else you need.
-
-The only thing **not working** out of the box is **Bluetooth**; this requires a Device Tree modification to fix. See below.
-
-The HDMI console with a USB kbd and mouse works well, install `gpm` to get a working mouse in it. Once i had bluetooth working I was able to attach and use a bluetooth kbd+mouse with no issues.
-
-#### Note:
-I experimentally installed XFCE, it took 1+ hrs to log in and get a totally unusable desktop, the GPU support is obviously not there yet. Fortunately I have no plans to use a desktop and so it got de-installed asap.
+<EDITED LOG HERE>
 
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default Nezha device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this be putting a better device tree on it.
@@ -35,33 +24,30 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 ![My Hardware](waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 # Device Trees
+In the install steps above we reconfigure the system to use the correct MangoPI MQ pro device tree instead of the ??FIX?? one.
+
 A device tree is a file that defines the structure of the peripherals attached to, and provided by, the GPIO and internal busses on a SBC.
 
 It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
 
 In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up. 
 
-We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Nezha) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
-
-My pre-compiled device-trees for the MQ PRO are [here](./precompiled-trees), along with install notes.
-- I may modify this in the future as I learn how to handle kernel upgrades properly, my current install method is probably sub-optimal. But it should work.
+We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (??FIX??) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
 
 ## Roll Your Own Device Tree
-Hopefully you can find what you want in the precompiled trees, or use the vanilla tree and dynamically create your devices on it via `pinctl`.
+Hopefully you can do what you need with the default tree, and dynamically create your devices on it via `pinctl`.
 
-But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [device-tree](./device-tree) folder.
+But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder.
 
 # Using the new tree
 
 ## Enabling Bluetooth
-You need one of the new device trees provided here; these correctly map UART1 onto the BT controller (with RTS/CTS).
-
-Once that is in place you also need the correct firmware for the bluetooth adapter, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
+After cheanging to the correct device tree you also need the correct firmware for the bluetooth adapter, a copy of this is in the [files/rtl_bt/](./files/rtl_bt) folder.
 * Copy the two firmware (`.bin`) files to `/usr/lib/firmware/rtl_bt/` on the MQ PRO and reboot.
 * Install *Bluez* (`sudo apt install bluez`) and then you can use `bluetoothctl` to configure and connect
 
 ## Status LED
-The onboard (blue) status LED can now be controlled via the sys tree:
+The onboard (blue) status LED can be controlled via the sys tree:
 
 `sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
 
