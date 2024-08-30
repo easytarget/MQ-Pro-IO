@@ -1,5 +1,6 @@
 # specific to this repo
-device-tree/*/*.dts*
+build-trees/*.dt*
+build-trees/*/*.dt*
 source/*
 
 # Byte-compiled / optimized / DLL files

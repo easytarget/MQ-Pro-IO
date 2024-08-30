@@ -1,66 +1,73 @@
 # MangoPI MQ Pro Device Trees for Bluetooth and GPIO
 ### The MQ pro is a single core allwinner D1 64bit 1Ghz, 1Gb risc-v based Pi-Zero-alike.
 
-This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
+-----------------------------
 
-`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a very good choice for an unattended headless device.
+# WORK IN PROGRESS
+
+# Currently being re-written for the 24.04.1 release.
+## There are also major changes to how the device tree is handled
+
+`24.04.1` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a good choice for an unattended headless device.
+
+Unfortunately there is no Official Ubuntu image for the MQ Pro, but you can use the image for the Lichee RV dock. This has the same SOC as the MQ-Pro, and boots properly.
+
+Once the Lichee image is booted you can swap the device tree it uses for the MQ-Pro one.
+- Vanilla device trees for all current Risc-v platforms are provided as part of the firmware package for each kernel.
+- This means that the mqpro device tree *is* available, but is not the default installed by `flash-kernel` for the image file we use.
+  - You can reconfigure `flash-kernel` with a different default  device tree name in config
+  - This is future proof, each new kernel deliveres a new device tree that will be installed as the kernel is upgraded.
+- The idea of compiling your own DT is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
+
+-----------------------------
+
+This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
 ## Installing Ubuntu
-There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'AllWinner Nezha' which installs and boots on the MQ Pro with almost everything working.
+There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'Sipeed Lichee RV' which installs and boots on the MQ Pro with almost everything working.
 
-Please refer to the Ubuntu documentation and forums if struggling with this.
 - I had issues getting a successful first boot with a cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
 - I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
 
+The HDMI console with a USB kbd and mouse works well, install `gpm` to get a working mouse in it. Once i had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
+
+- EXPAND!!!, 
+ notes about hdmi console, usb ethernet adapters, presetup wifi etc. 
+
 ### steps:
-- Download the 'AllWinner Nezha' Ubuntu image (compatible with the MQ pro) from: https://ubuntu.com/download/risc-v
-- Follow the instructions linked there to create a SD/TF card image and boot the MQ Pro using it.
-- WAIT!
-  - First boot is super-slow, it may take 10+ mins before you see anything on the HDMI console.
-  - If you have a USB-Serial adapter you can follow the boot via the serial console (`UART0` on the GPIO connector)
-- Eventually you can log in (`ubuntu`,`ubuntu`) and will be guided through changing password etc.
-- TODO: Wifi Setup
-- Run `apt update` then `apt upgrade` and install whatever else you need.
-
-The only thing **not working** out of the box is **Bluetooth**; this requires a Device Tree modification to fix. See below.
-
-The HDMI console with a USB kbd and mouse works well, install `gpm` to get a working mouse in it. Once i had bluetooth working I was able to attach and use a bluetooth kbd+mouse with no issues.
-
-#### Note:
-I experimentally installed XFCE, it took 1+ hrs to log in and get a totally unusable desktop, the GPU support is obviously not there yet. Fortunately I have no plans to use a desktop and so it got de-installed asap.
+--- See the raw log at the end of this doc.
+<EDITED LOG HERE>
 
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default Nezha device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this be putting a better device tree on it.
 
-![My Hardware](waveshare_SX1268_LoRa_HAT/overview.jpg)
+![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 # Device Trees
+In the install steps above we reconfigure the system to use the correct MangoPI MQ pro device tree instead of the Sipeed Lichee RV one.
+
 A device tree is a file that defines the structure of the peripherals attached to, and provided by, the GPIO and internal busses on a SBC.
 
 It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
 
 In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up. 
 
-We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Nezha) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
-
-My pre-compiled device-trees for the MQ PRO are [here](./precompiled-trees), along with install notes.
-- I may modify this in the future as I learn how to handle kernel upgrades properly, my current install method is probably sub-optimal. But it should work.
+We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
 
 ## Roll Your Own Device Tree
-Hopefully you can find what you want in the precompiled trees, or use the vanilla tree and dynamically create your devices on it via `pinctl`.
+Hopefully you can do what you need with the default tree, and dynamically create your devices on it via `pinctl`.
 
-But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [device-tree](./device-tree) folder.
+But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder.
 
 # Using the new tree
 
 ## Enabling Bluetooth
-You need one of the new device trees provided here; these correctly map UART1 onto the BT controller (with RTS/CTS).
-
-Once that is in place you still need the correct firmware for the bluetooth adapter, a copy of this is in the [bluetooth firmware](./bt-fw) folder.
-* Copy the two firmware (`.bin`) files to `/usr/lib/firmware/` on the MQ PRO and reboot.
+After changing to the correct device tree you also need the correct firmware for the bluetooth adapter, a copy of this is in the [files/rtl_bt/](./files/rtl_bt) folder.
+* Copy the two firmware (`.bin`) files to `/usr/lib/firmware/rtl_bt/` on the MQ PRO and reboot.
+* Install *Bluez* (`sudo apt install bluez`) and then you can use `bluetoothctl` to configure and connect
 
 ## Status LED
-The onboard (blue) status LED can now be controlled via the sys tree:
+The onboard (blue) status LED can be controlled via the sys tree:
 
 `sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
 
@@ -69,6 +76,8 @@ The onboard (blue) status LED can now be controlled via the sys tree:
 You can make it flash as wifi traffic is seen with:
 
 `sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
+
+You can make this permanent by, as root, copying `tools/mqpro-status-led.service` to `/etc/systemd/system/`, running `systemctl daemon-reload` then `systemctl enable --now mqpro-status-led.service`.
 
 ## Using GPIO
 Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
@@ -146,3 +155,92 @@ Online:
 * https://mangopi.org/mangopi_mqpro
 * https://linux-sunxi.org/MangoPi_MQ-Pro
 * https://github.com/boosterl/awesome-mango-pi-mq-pro
+
+
+
+# RAW INSTALL LOG
+## THIS WILL BE FOLDED INTO THE "STEPS" SECTION ABOVE.
+
+```console
+wget https://cdimage.ubuntu.com/releases/noble/release/ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz
+
+xzcat ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz | sudo dd bs=8M conv=fsync status=progress of=/dev/mmcblk0
+
+sudo mount /dev/mmcblk1p1 /mnt
+
+sudo vi /mnt/etc/cloud/cloud.cfg.d/55_net.cfg
+------ new file comments, contents -------
+network:
+    version: 2
+    wifis:
+        wlan0:
+            optional: true
+            access-points:
+                "SSID":
+                    password: "PASSWORD"
+            dhcp4: true
+-----------------
+sudo umount /mnt
+
+Insert card to MQ Pro and BOOT
+- serial adapter useful to follow progress
+- hdmi console after several minutes, appears to freeze but recovers when prompt reached
+- should come up on network if wifi configured or using a usb ethernet adapter
+- login on console or via ssh as ubuntu:ubuntu and follow instructions to change password
+
+swap to mqpro dtb:
+
+ubuntu@ubuntu:~$ sudo vi /etc/flash-kernel/db
+---- Append this after the comments -----
+Machine: MangoPI MQ pro
+Kernel-Flavors: any
+DTB-Id: allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+----------------
+ubuntu@ubuntu:~$ sudo vi /etc/flash-kernel/machine
+--- change to read (one line) ---
+MangoPI MQ pro
+---
+ubuntu@ubuntu:~$ sudo flash-kernel
+Using DTB: allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Installing /lib/firmware/6.8.0-41-generic/device-tree/allwinner/sun20i-d1-mangopi-mq-pro.dtb into /boot/dtbs/6.8.0-41-generic/allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Taking backup of sun20i-d1-mangopi-mq-pro.dtb.
+Installing new sun20i-d1-mangopi-mq-pro.dtb.
+System running in EFI mode, skipping.
+
+Reboot again to check the dt is correct before going further..
+... rebooting takes some time on this board
+ubuntu@ubuntu:~$ sudo reboot
+wait..
+ssh into the machine as ubuntu:<new passwd>
+sudo cat /proc/device-tree/model
+- should return 'MangoPi MQ Pro'
+
+-- now update
+sudo su -
+screen
+apt update
+.. let this run, slow on this machine, especially the first run
+.. will eventually tell you that a lot of packages (149 as of this guide) need updating
+apt update
+.. You may see packages 'deferred due to phasing', this is quite normal, an artifact of Ubuntu's build system, and can safely be ignored.
+.. This may be a good time to have lunch.
+
+When this completes reboot again, or finish the BT setup below first, since it also needs a reboot.
+
+# BT and Status LED
+git clone https://github.com/easytarget/MQ-Pro-IO.git
+# copy Bluetooth firmware to correct folder
+sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
+- install bluez, use bluetoothctl to connect and pair,etc
+apt install bluez
+- this will be applied at next reboot
+
+
+# set up a service for the activity light
+sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now mqpro-status-led.service
+```

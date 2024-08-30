@@ -1,2 +1,1 @@
-# Download the sources here if desired
-
+## Download the sources here, see [build-tree README](../build-tree/README.md).
