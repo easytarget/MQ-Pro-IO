@@ -1,9 +1,9 @@
 # MangoPI MQ Pro Device Trees for Bluetooth and GPIO
 ### The MQ pro is a single core allwinner D1 64bit 1Ghz, 1Gb risc-v based Pi-Zero-alike.
 
-This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.
+This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
-`24.04` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a good choice for an unattended headless device.
+`24.04.1` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a good choice for an unattended headless device.
 
 ## Installing Ubuntu
 There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'Sipeed Lichee RV' which installs and boots on the MQ Pro with almost everything working.
@@ -17,12 +17,13 @@ The HDMI console with a USB kbd and mouse works well, install `gpm` to get a wor
  notes about hdmi console, usb ethernet adapters, presetup wifi etc. 
 
 ### steps:
+--- See the raw log at the end of this doc.
 <EDITED LOG HERE>
 
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default Nezha device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this be putting a better device tree on it.
 
-![My Hardware](waveshare_SX1268_LoRa_HAT/overview.jpg)
+![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 # Device Trees
 In the install steps above we reconfigure the system to use the correct MangoPI MQ pro device tree instead of the Sipeed Lichee RV one.
@@ -164,8 +165,10 @@ network:
 sudo umount /mnt
 
 Insert card to MQ Pro and BOOT
-- should come up on network
-- ssh as ubuntu:ubuntu and follow instructions to change password
+- serial adapter useful to follow progress
+- hdmi console after several minutes, appears to freeze but recovers when prompt reached
+- should come up on network if wifi configured or using a usb ethernet adapter
+- login on console or via ssh as ubuntu:ubuntu and follow instructions to change password
 
 swap to mqpro dtb:
 
@@ -184,7 +187,8 @@ MangoPI MQ pro
 ---
 ubuntu@ubuntu:~$ sudo flash-kernel
 Using DTB: allwinner/sun20i-d1-mangopi-mq-pro.dtb
-Installing /lib/firmware/6.8.0-31-generic/device-tree/allwinner/sun20i-d1-mangopi-mq-pro.dtb into /boot/dtbs/6.8.0-31-generic/allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Installing /lib/firmware/6.8.0-41-generic/device-tree/allwinner/sun20i-d1-mangopi-mq-pro.dtb into /boot/dtbs/6.8.0-41-generic/allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Taking backup of sun20i-d1-mangopi-mq-pro.dtb.
 Installing new sun20i-d1-mangopi-mq-pro.dtb.
 System running in EFI mode, skipping.
 
