@@ -53,16 +53,16 @@ In this guide we only replace the device tree used by the kernel when Linux is s
 We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
 
 ## Roll Your Own Device Tree
-Hopefully you can do what you need with the default tree, and dynamically create your devices on it via `pinctl`.
+Hopefully you can do what you need with the default tree, and dynamically create your devices on it via `gpiod` and `pinctl`.
 
 But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder.
 
-# Using the new tree
+# Using the trees
 
 ## Enabling Bluetooth
 After changing to the correct device tree you also need the correct firmware for the bluetooth adapter, a copy of this is in the [files/rtl_bt/](./files/rtl_bt) folder.
-* Copy the two firmware (`.bin`) files to `/usr/lib/firmware/rtl_bt/` on the MQ PRO and reboot.
-* Install *Bluez* (`sudo apt install bluez`) and then you can use `bluetoothctl` to configure and connect
+* Copy the two firmware (`.bin`) files to `/usr/lib/firmware/rtl_bt/` on the MQ PRO.
+* Install *Bluez* (`sudo apt install bluez`) and reboot, you can then use `bluetoothctl` to configure and connect
 
 ## Status LED
 The onboard (blue) status LED can be controlled via the sys tree:
@@ -77,6 +77,8 @@ You can make it flash as wifi traffic is seen with:
 
 You can make this permanent by, as root, copying `tools/mqpro-status-led.service` to `/etc/systemd/system/`, running `systemctl daemon-reload` then `systemctl enable --now mqpro-status-led.service`.
 
+Other control options are available, `sudo cat /sys/devices/platform/leds/leds/blue\:status/brightness` shows a list and the current selection. Most do not work or are not very useful; ymmv.
+
 ## Using GPIO
 Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
 
@@ -88,7 +90,7 @@ The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins
 Pins are organised into 7 'banks' (*PA*, *PB*, etc to *PG*) of up to 32 pins, but most banks have fewer pins.
 
 ## GPIO Pin Muxing
-The **D1** SOC itself has 88 GPIO pins. 
+The **D1** SOC itself has 88 GPIO pins.
 
 In the MQ PRO some of these GPIO pins are wired directly to peripherals on the board (eg SD card, Wifi chip, etc.) but that still leaves many free lines.
 
