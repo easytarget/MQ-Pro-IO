@@ -1,12 +1,11 @@
 # MangoPI MQ Pro Device Trees for Bluetooth and GPIO
-### The MQ pro is a single core allwinner D1 64bit 1Ghz, 1Gb risc-v based Pi-Zero-alike.
+### The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz, 1Gb SBC, in a Pi-Zero form factor.
+## This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
 -----------------------------
 
-# WORK IN PROGRESS
-
-# Currently being re-written for the 24.04.1 release.
-## There are also major changes to how the device tree is handled
+# (STILL) A WORK IN PROGRESS
+- Currently being re-written for the 24.04.1 release.
 
 `24.04.1` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a good choice for an unattended headless device.
 
@@ -21,7 +20,6 @@ Once the Lichee image is booted you can swap the device tree it uses for the MQ-
 
 -----------------------------
 
-This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
 ## Installing Ubuntu
 There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'Sipeed Lichee RV' which installs and boots on the MQ Pro with almost everything working.
@@ -29,13 +27,13 @@ There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* pr
 - I had issues getting a successful first boot with a cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
 - I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
 
+- EXPAND!!!,
+ notes about hdmi console, usb ethernet adapters, presetup wifi etc.
+`
 The HDMI console with a USB kbd and mouse works well, install `gpm` to get a working mouse in it. Once i had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
 
-- EXPAND!!!, 
- notes about hdmi console, usb ethernet adapters, presetup wifi etc. 
-
 ### steps:
---- See the raw log at the end of this doc.
+- AT PRESENT: See the raw log at the end of this doc.
 <EDITED LOG HERE>
 
 # My Motivation:
