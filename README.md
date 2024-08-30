@@ -71,7 +71,7 @@ The onboard (blue) status LED can be controlled via the sys tree:
 
 `sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
 
-You can make it flash as wifi traffic is seen with:
+You can make it flash as network traffic is seen with:
 
 `sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
 
