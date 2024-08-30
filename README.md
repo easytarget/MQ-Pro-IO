@@ -1,9 +1,27 @@
 # MangoPI MQ Pro Device Trees for Bluetooth and GPIO
 ### The MQ pro is a single core allwinner D1 64bit 1Ghz, 1Gb risc-v based Pi-Zero-alike.
 
-This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
+-----------------------------
+
+# WORK IN PROGRESS
+
+# Currently being re-written for the 24.04.1 release.
+## There are also major changes to how the device tree is handled
 
 `24.04.1` is a LTS+ release from Ubuntu, and should provide 5+ years of updates. As such it makes a good choice for an unattended headless device.
+
+Unfortunately there is no Official Ubuntu image for the MQ Pro, but you can use the image for the Lichee RV dock. This has the same SOC as the MQ-Pro, and boots properly.
+
+Once the Lichee image is booted you can swap the device tree it uses for the MQ-Pro one.
+- Vanilla device trees for all current Risc-v platforms are provided as part of the firmware package for each kernel.
+- This means that the mqpro device tree *is* available, but is not the default installed by `flash-kernel` for the image file we use.
+  - You can reconfigure `flash-kernel` with a different default  device tree name in config
+  - This is future proof, each new kernel deliveres a new device tree that will be installed as the kernel is upgraded.
+- The idea of compiling your own DT is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
+
+-----------------------------
+
+This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
 ## Installing Ubuntu
 There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'Sipeed Lichee RV' which installs and boots on the MQ Pro with almost everything working.
