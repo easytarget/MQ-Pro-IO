@@ -8,12 +8,13 @@ This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabil
 ## Installing Ubuntu
 There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'Sipeed Lichee RV' which installs and boots on the MQ Pro with almost everything working.
 
-Please refer to the Ubuntu documentation and forums if struggling with this.
 - I had issues getting a successful first boot with a cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
 - I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
 
-There is no HDMI output (console) with the image.
-- EXPAND!!!
+The HDMI console with a USB kbd and mouse works well, install `gpm` to get a working mouse in it. Once i had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
+
+- EXPAND!!!, 
+ notes about hdmi console, usb ethernet adapters, presetup wifi etc. 
 
 ### steps:
 <EDITED LOG HERE>
@@ -42,7 +43,7 @@ But if not; my somewhat limited notes on compiling the tree, plus a script that 
 # Using the new tree
 
 ## Enabling Bluetooth
-After cheanging to the correct device tree you also need the correct firmware for the bluetooth adapter, a copy of this is in the [files/rtl_bt/](./files/rtl_bt) folder.
+After changing to the correct device tree you also need the correct firmware for the bluetooth adapter, a copy of this is in the [files/rtl_bt/](./files/rtl_bt) folder.
 * Copy the two firmware (`.bin`) files to `/usr/lib/firmware/rtl_bt/` on the MQ PRO and reboot.
 * Install *Bluez* (`sudo apt install bluez`) and then you can use `bluetoothctl` to configure and connect
 
@@ -142,12 +143,13 @@ Online:
 ## THIS WILL BE FOLDED INTO THE "STEPS" SECTION ABOVE.
 
 ```console
-wget https://cdimage.ubuntu.com/releases/noble/release/ubuntu-24.04-preinstalled-server-riscv64+licheerv.img.xz
+wget https://cdimage.ubuntu.com/releases/noble/release/ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz
 
-xzcat ubuntu-24.04-preinstalled-server-riscv64+licheerv.img.xz | dd bs=8M conv=fsync status=progress of=/dev/mmcblk0
-mount /dev/mmcblk1p1 /mnt
+xzcat ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz | sudo dd bs=8M conv=fsync status=progress of=/dev/mmcblk0
 
-vi /mnt/etc/cloud/cloud.cfg.d/55_net.cfg
+sudo mount /dev/mmcblk1p1 /mnt
+
+sudo vi /mnt/etc/cloud/cloud.cfg.d/55_net.cfg
 ------ new file comments, contents -------
 network:
     version: 2
@@ -155,14 +157,11 @@ network:
         wlan0:
             optional: true
             access-points:
-                "VIRUS-666.EXE":
-                    password: "85957495021370826273"
-                "EasyTarget":
-                    password: "easytargets"
+                "SSID":
+                    password: "PASSWORD"
             dhcp4: true
-        dhcp4: true
 -----------------
-umount /mnt
+sudo umount /mnt
 
 Insert card to MQ Pro and BOOT
 - should come up on network
@@ -212,15 +211,14 @@ When this completes reboot again, or finish the BT setup below first, since it a
 # BT and Status LED
 git clone https://github.com/easytarget/MQ-Pro-IO.git
 # copy Bluetooth firmware to correct folder
-cd MQ-Pro-IO/files/
-sudo cp rtl8723ds_* /usr/lib/firmware/rtl_bt/
+sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
 - install bluez, use bluetoothctl to connect and pair,etc
 apt install bluez
 - this will be applied at next reboot
 
 
 # set up a service for the activity light
-sudo cp mqpro-status-led.service /etc/systemd/system/
+sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now mqpro-status-led.service
 ```
