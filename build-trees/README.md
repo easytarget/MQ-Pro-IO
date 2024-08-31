@@ -81,15 +81,17 @@ ubuntu@ubuntu:~/MQ-Pro-IO/build-trees$ ./make_dtb.sh
 Compiling against headers for 6.8.0-41-generic
 Creating new build directory: 6.8.0-41-generic
 Precompiling all includes in build root into 6.8.0-41-generic build directory
-Processing sun20i-common-regulators.dtsi to 6.8.0-41-generic/sun20i-common-regulators.dtsi
-Processing sun20i-d1.dtsi to 6.8.0-41-generic/sun20i-d1.dtsi
-Processing sun20i-d1s.dtsi to 6.8.0-41-generic/sun20i-d1s.dtsi
-Processing sunxi-d1-t113.dtsi to 6.8.0-41-generic/sunxi-d1-t113.dtsi
-Processing sunxi-d1s-t113.dtsi to 6.8.0-41-generic/sunxi-d1s-t113.dtsi
+  sun20i-common-regulators.dtsi -> 6.8.0-41-generic/sun20i-common-regulators.dtsi
+  sun20i-d1.dtsi -> 6.8.0-41-generic/sun20i-d1.dtsi
+  sun20i-d1s.dtsi -> 6.8.0-41-generic/sun20i-d1s.dtsi
+  sunxi-d1-t113.dtsi -> 6.8.0-41-generic/sunxi-d1-t113.dtsi
+  sunxi-d1s-t113.dtsi -> 6.8.0-41-generic/sunxi-d1s-t113.dtsi
 Precompiling all sources in build root into 6.8.0-41-generic build directory
-Processing sun20i-d1-mangopi-mq-pro.dts to 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts
+  my-project-mqpro.dts -> 6.8.0-41-generic/my-project-mqpro.dts
+  sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts
 Compiling all device tree sources in 6.8.0-41-generic build directory
-Compiling: 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts > 6.8.0-41-generic/6.8.0-41-generic-sun20i-d1-mangopi-mq-pro.dtb
+  6.8.0-41-generic/my-project-mqpro.dts -> 6.8.0-41-generic/6.8.0-41-generic-my-project-mqpro.dtb
+  6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-41-generic/6.8.0-41-generic-sun20i-d1-mangopi-mq-pro.dtb
 ```
 
 -----------------------
@@ -97,10 +99,8 @@ Compiling: 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts > 6.8.0-41-generic/6.8.
 # Test Installing self-built DTB's
 
 ### Move dtb into the boot tree
-* move the `.dtb` file into the `/boot` folder:
-  `sudo mv dtb-6.8.0-31-mqpro-generic /boot/dtbs`
-* make a soft link in `/boot` to this:
-  `sudo ln -s dtbs/dtb-6.8.0-31-mqpro-generic.dtb /boot/dtb-mqpro`
+* move the `.dtb` file into the `/boot` folder: `sudo mv 6.8.0-41-generic-my-project-mqpro.dtb /boot/dtbs`
+* make a soft link in `/boot` to this: `sudo ln -s dtbs/6.8.0-41-generic-my-project-mqpro.dtb /boot/dtb-mqpro`
 
 ### Set up Grub to test boot the new DTB
 Initially we will test the new dtb:
@@ -109,7 +109,7 @@ Initially we will test the new dtb:
   Find the 1st `menuentry` section (the default Ubuntu one) and edit the `devicetree` line to look like:
   `devicetree      /boot/dtb-mqpro`
 * Reboot (`sudo reboot`) (remember the mq-pro is sloooow to reboot ;-) )
-* If the reboot fails you can either attach a serial adapter to the GPIO pins and select the fallback kernel from the advanced options menu, and then restore the grub config backup once logged in. 
+* If the reboot fails you can either attach a serial adapter to the GPIO pins and select the fallback kernel from the advanced options menu, and then restore the grub config backup once logged in.
   Or (if no serial available) remove the SD card, mount it on another computer and restore the file there.
 
 ### Quick check that we have the correct device tree!

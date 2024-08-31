@@ -24,13 +24,13 @@ fi
 
 echo "Precompiling all includes in build root into $revision build directory"
 for file in `ls *.dtsi`; do
-    echo "Processing $file to $revision/${file##*/}"
+    echo "  $file -> $revision/${file##*/}"
     cpp -I/usr/src/linux-headers-$revision/include/ -nostdinc -undef -x assembler-with-cpp $file > $revision/${file##*/}
 done
 
 echo "Precompiling all sources in build root into $revision build directory"
 for file in `ls *.dts`; do
-    echo "Processing $file to $revision/${file##*/}"
+    echo "  $file -> $revision/${file##*/}"
     cpp -I/usr/src/linux-headers-$revision/include/ -nostdinc -undef -x assembler-with-cpp $file > $revision/${file##*/}
 done
 
@@ -38,6 +38,6 @@ echo "Compiling all device tree sources in $revision build directory"
 cd $revision
 for file in `ls *.dts`; do
     out=${file/.dts/.dtb}
-    echo "Compiling: $revision/$file > $revision/$revision-$out"
+    echo "  $revision/$file -> $revision/$revision-$out"
     $dtc $file > $revision-$out
 done
