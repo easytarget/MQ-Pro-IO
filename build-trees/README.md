@@ -1,12 +1,14 @@
 # NOTE
-# Being refactored at the moment. I want to make sure the dtsi and generic image are taken for currnet kernel;
+# I am still finishing changes for Ubuntu 24.04.1
+
+This folder contains a `make-trees` script that can build device tree source (`.dts`) files with the correct upstream headers.
 
 ## Preparation / requirements
 
 ### Compile and make tooling
 You need `build-essential` installed:
 ```console
-apt install build-essential`
+apt install build-essential
 ```
 *This will take a while.. as will most commands described here!*
 
@@ -32,7 +34,7 @@ sudo apt update
 You should see a load of new (source) repos being updated, it is slow, let it finish.
 
 ## Install the linux sources
-This can be done as a normal user
+This should be done as a normal user
 - Note that the command used here `apt source` will download the sources to the current working folder, not a fixed location.
 
 We download the sources into the [sources](../sources) repo in this folder:
@@ -40,35 +42,55 @@ We download the sources into the [sources](../sources) repo in this folder:
 cd source
 apt source linux-riscv
 ```
-Go for a coffee.. unless you are a developer you can ignore the 'git clone' suggestion.
+Go for a coffee.. ignore the 'git clone' suggestion.
 - This will use ~1.6Gb of space.. so be prepared.
 
 # Updating sources
-If you re-run the command in this folder it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
+If you re-run the `apt source` command in this folder it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
 
-----------------------------------------------------
-# Rebuild dts tree for MQ pro..
+-------------------------------------------
+# Building the device tree(s)
 
-### The following is wrong! It will be updated asap
-```
-Start by `cd`'ing into this [device tree](device-tree) folder and editing your device tree.
-
-You can use the generic `sun20i-d1-mangopi-mq-pro.generic.dts` already in the device tree folder as a basis, or start with one of the ones provided with my precompiled trees.
-
-You may also need to modify `sun20i-d1.dtsi` since this is where pin mappings are declared; eg UART pin sets are defined in this include file and then used in the main tree file.
-
-A full-on tutorial for device tree editing is far beyond the scope of both this document and author.
-```
+As a normal user (the same user used to fetch the sources above) cd to this (`build-trees`) folder.
 
 #### Terms
 * `.dts` is a top-level Device Tree Source file.
 * `.dtsi` is a include file for the `.dts`
 * `.dtb` is the binary compiled device tree, this is what we are building here, and is supplied to the kernel at boot time.
 
-## Building the MQ PRO device tree (`.dtb`)
+## device tree sources
+By default the standard `sun20i-d1-mangopi-mq-pro.dts` file from the Ubuntu source is linked here. 
+
+Rather than modifying the default tree you should copy it to a custom name, eg 'my-project-mqpro.dts'. Or you can copy in examples from the [alt-trees](../alt-trees/) folder.
+
+A full-on tutorial for device tree editing is far beyond the scope of both this document and author.
+* The examples show some simple custom modifications.
+* The upstream sources do not define all possible pin mappings, so note how additional pin mappings are added as needed to the custom trees.
 
 ## Compile the mq-pro dts with the current kernel headers
-<Describe `make-trees.sh`>
+
+To compile all the includes and sources simply run `make-trees`.
+
+This will:
+* Create an output folder named after the kernel version
+* Pre-compile all the source and include files in the current folder into the output folder using the correct kernel headers.
+* In the output folder it then compiles *all* the `.dts` files present, and prefixes the output `.dtb` files with the kernel version.
+
+```console
+ubuntu@ubuntu:~/MQ-Pro-IO/build-trees$ ./make_dtb.sh
+Compiling against headers for 6.8.0-41-generic
+Creating new build directory: 6.8.0-41-generic
+Precompiling all includes in build root into 6.8.0-41-generic build directory
+Processing sun20i-common-regulators.dtsi to 6.8.0-41-generic/sun20i-common-regulators.dtsi
+Processing sun20i-d1.dtsi to 6.8.0-41-generic/sun20i-d1.dtsi
+Processing sun20i-d1s.dtsi to 6.8.0-41-generic/sun20i-d1s.dtsi
+Processing sunxi-d1-t113.dtsi to 6.8.0-41-generic/sunxi-d1-t113.dtsi
+Processing sunxi-d1s-t113.dtsi to 6.8.0-41-generic/sunxi-d1s-t113.dtsi
+Precompiling all sources in build root into 6.8.0-41-generic build directory
+Processing sun20i-d1-mangopi-mq-pro.dts to 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts
+Compiling all device tree sources in 6.8.0-41-generic build directory
+Compiling: 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts > 6.8.0-41-generic/6.8.0-41-generic-sun20i-d1-mangopi-mq-pro.dtb
+```
 
 -----------------------
 
