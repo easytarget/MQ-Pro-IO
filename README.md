@@ -2,6 +2,10 @@
 
 The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz CPU, with 1Gb RAM, HDMI and Wifi, in a Pi-Zero form factor Single Board Computer.
 
+It runs Linux, and is quite usable as a small headless (networked, non GUI) machine.
+
+![reference/MangoPi-MQ-Pro-view.jpg](reference/MangoPi-MQ-Pro-view.jpg)
+
 ## This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
 The `24.04.1` is a LTS+ release from Ubuntu and should provide 5+ years of updates. 
