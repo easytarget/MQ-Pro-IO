@@ -8,46 +8,48 @@ The `24.04.1` is a LTS+ release from Ubuntu and should provide 5+ years of updat
 
 As such it makes a good choice for an unattended headless device.
 
-Unfortunately there is no Official Ubuntu image for the MQ Pro, but you can use the image for the Lichee RV dock. This has the same SOC as the MQ-Pro, and boots properly.
+Unfortunately there is no [Official Ubuntu image](https://ubuntu.com/download/risc-v) for the MQ Pro, but you can use the image for the Sipeed LicheeRV dock. This has the same SOC as the MQ-Pro, and boots properly.
 
-Once the Lichee image is booted you can swap the device tree it uses for the MQ-Pro one.
+Once the LicheeRV image is booted you can swap the device tree it uses for the MQ-Pro one.
 - Vanilla device trees for all current Risc-v platforms are provided as part of the firmware package for each kernel.
 - This means that the mqpro device tree *is* available, but is not the default installed by `flash-kernel` for the image file we use.
-  - You can reconfigure `flash-kernel` with a different default  device tree name in config
+  - You can reconfigure `flash-kernel` with a different default device tree name in config.
   - This is future proof, each new kernel deliveres a new device tree that will be installed as the kernel is upgraded.
-- The idea of compiling your own DT is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
+
+The idea of compiling your own Device Tree is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
+- However, I also have instructions for doing this, for those who like to tinker.
 
 -----------------------------
 
-
-## Installing Ubuntu
-There is *no* specific image provided by Ubuntu for the MQ PRO, but they *do* provide an image for the 'Sipeed Lichee RV' which installs and boots on the MQ Pro with almost everything working.
-
-- I had issues getting a successful first boot with a cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
+## Install Steps
+If you have set up SD card based systems before the following should feel familiar. You will need a SD card to boot and run the system.
+- I had issues getting a successful first boot with a *generic* cheap SD card, using a brand-name (Kingston) high speed card solved all the issues.
 - I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
 
-You can boot the licheerv image directly on the MQ Pro, the HDMI console is available:
-- Unfortunately it only starts very late in the boot process and is not usable until the boot is complete.
-- You can use a USB keyboard, and install `gpm` to get a working mouse.
-  - Once I had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
-- If you have a USB serial adapter available you can follow the entire boot process
-  - This is the only way to access the GRUB prompt and select recovery options etc!
-  - Make sure your adapter is set to 3.3v and *not* 5v. This is important.
-  - Attach `gnd`, `tx` and `rx` to pins 6,8 and 10 on th eGPIO header.
-  - See Jeff Geerlings excellent '[https://www.jeffgeerling.com/blog/2021/attaching-raspberry-pis-serial-console-uart-debugging](https://www.jeffgeerling.com/blog/2021/attaching-raspberry-pis-serial-console-uart-debugging) article for a good description. His example is for a Raspberry PI, but MQ Pro is *identical* to a Pi for this.
+### Notes
+Unfortunately HDMI only starts very late in the boot process, you cannot select GRUB options, and the console is not usable until the boot is complete.
+- Once the console login is available You can use a USB keyboard with it, and install `gpm` to get a working mouse. 
+- Once I had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
+
+If you have a USB serial adapter available you can follow the entire boot process
+- This is the only way to access the GRUB prompt and select recovery options etc!
+- Make sure your adapter is set to 3.3v and *not* 5v. This is important.
+- Attach `gnd`, `tx` and `rx` to pins `6`, `8` and `10` on the GPIO header.
+- See Jeff Geerlings excellent '[serial console uart debugging](https://www.jeffgeerling.com/blog/2021/attaching-raspberry-pis-serial-console-uart-debugging) article for a good description. His example is for a Raspberry PI, but MQ Pro is *identical* to a Pi for this.
 
 The WiFi module will be detected, but will not connect to any networks unless preconfigured on the SD card before first boot.
-- The instructions below show how to do this. (Requires a linux machine to mount+modify the SD card.)
-- Alternatively, wait for the console boot to finish and configure the network on that using netplan or NetworkManager.
-- If you have a Linux compatible USB Ethernet adapter you can attach that to the spare USB-C port.
-  - It will be detected and connected (using DHCP) during boot.
-  - You will need to find the assigned IP from router logs, netscan, or looking on the console.
+- The instructions below show how to do this. (Requires a linux machine to mount & modify the SD card.)
+- Alternatively, wait for the console boot to finish and configure the network on that using netplan, this is also covered below.
 
-### Creating SD card & first boot.
+If you have a Linux compatible USB Ethernet adapter you can attach that to the spare USB-C port on the MQ-Pro.
+- It will be detected and connected (using DHCP) during boot.
+- You will need to find the assigned IP from router logs, netscan, or looking on the console.
+
+### Creating SD card
 You will need a suitable machine to download the image file to, with a SD card writer so the image can be written. 
 - The instructions below are for a generic Linux system with a sd card writer.
   - As ever with this sort of operation make *absolutely* sure you are using the correct disk device when writing.
-  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot om *my* system.
+  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot onm *my* system. ymmv.
 - Windows users need to ignore the linux steps and use a tool such as Belena Etcher or similar to burn the SD card, before skipping to [first boot](#first-boot).
 
 Get the image file; (as of 2-Sep-2024 the url below works).
@@ -97,7 +99,7 @@ $ sudo umount /mnt
 ```
 Eject the SD card.
 
-#### First Boot
+### First Boot
 Insert the SD card into the MQ Pro and BOOT.
 - First boot is SLOW. It will take 5+ minutes before anything useful appears on HDMI.
   - This is where, if you have a serial adapter, it is handy for following progress.
@@ -123,7 +125,6 @@ You should now have bootable machine you can access via the console or SSH. We c
 ```console
 ubuntu@ubuntu:~$ sudo vi /etc/flash-kernel/db
 ```
-
 Append the following after the comments:
 ```text
 Machine: MangoPI MQ pro
@@ -155,13 +156,15 @@ ubuntu@ubuntu:~$ sudo reboot
 # then ssh into the machine as ubuntu:<new passwd>
 $ sudo cat /proc/device-tree/model
 ```
-- Should return 'MangoPi MQ Pro'
+This should return 'MangoPi MQ Pro'
 
-#### You can now update as normal
+### Update
 ```console
 $ apt update
-# Let this run, slow on this machine, especially the first run
-# It will eventually tell you that a lot of packages need updating
+```
+Let this run
+- It will eventually tell you that a lot of packages need updating
+```console
 $ apt upgrade
 ```
 You may see packages 'deferred due to phasing', this is quite normal, an artifact of Ubuntu's build system. These can safely be ignored.
@@ -177,18 +180,21 @@ Copy Bluetooth firmware to the system firmware tree.
 ```console
 $ sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
 ```
- Before you reboot to apply these you shpule also install `bluez`, which allows you to use `bluetoothctl` to connect and pair,etc
+ Before you reboot to apply these you should also install `bluez`, which allows you to use `bluetoothctl` to connect and pair,etc
 ```console
 $ sudo apt install bluez
 $ sudo reboot
 ```
-# set up a service for the activity light
+# Set up a service for the activity light
 ```console
 $ sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable --now mqpro-status-led.service
 ```
 The Status LED should now be continually flashing with Network activity, there is more on controlling this below.
+
+--------------------------------------------------------------------
+
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
 
