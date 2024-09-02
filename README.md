@@ -27,7 +27,7 @@ If you have set up SD card based systems before the following should feel famili
 - I am also using a high wear resistance card since I want this to run for years in a hard-to-reach location.
 
 ### Notes
-Unfortunately HDMI only starts very late in the boot process, you cannot select GRUB options, and the console is not usable until the boot is complete.
+Unfortunately HDMI only starts very late in the boot process, you cannot use it to select GRUB options, and the console is not usable until the boot is complete.
 - Once the console login is available You can use a USB keyboard with it, and install `gpm` to get a working mouse. 
 - Once I had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
 
@@ -90,7 +90,7 @@ network:
 - This is for a very simple 'connect to accesspoint' scenario.
   - The Netplan syntax allows almost any possible Network setup to be preconfigured!
   - See the [Netplan Documentation](https://netplan.readthedocs.io/en/stable/examples/) for lots of examples and the full syntax.
-- After first boot this file will be copied, directly, to `/etc/netplan/50-cloud-init.yaml`.
+- After first boot this file will be copied (with some comments) to `/etc/netplan/50-cloud-init.yaml`.
   - If you made a mistake in the config, or need to change details, edit it in `/etc/netplan/` and use `netplan try` to test the new configuration.
 
 Unmount the filesystem so that it is synced properly.
@@ -100,9 +100,9 @@ $ sudo umount /mnt
 Eject the SD card.
 
 ### First Boot
-Insert the SD card into the MQ Pro and BOOT.
+Insert the SD card into the MQ Pro and apply power.
 - First boot is SLOW. It will take 5+ minutes before anything useful appears on HDMI.
-  - This is where, if you have a serial adapter, it is handy for following progress.
+  - This is where a serial adapter is handy for following progress.
 - The HDMI console first appears after several minutes but then freezes soon after, it recovers after a while when the login prompt appears.
 
 Once the machine has booted you can login on console or ssh as `ubuntu:ubuntu`, and follow the mandatory instructions to change password.
@@ -134,7 +134,7 @@ Boot-Script-Path: /boot/boot.scr
 U-Boot-Script-Name: bootscr.uboot-generic
 Required-Packages: u-boot-tools
 ```
-This adds a new custom entry for the MQ Pro based on the default Lichee definition in `/usr/share/flash-kernel/db/all.db`, but with the correct name and device tree.
+This adds a new custom entry for the MQ Pro based on the default LicheeRV dock definition from `/usr/share/flash-kernel/db/all.db`, but with the correct name and device tree.
 
 Make this the default with:
 ```console
@@ -151,14 +151,13 @@ System running in EFI mode, skipping.
 ```
 Reboot the system and you will be using the default (vanilla) device tree.
 ```console
-ubuntu@ubuntu:~$ sudo reboot
-# wait while it reboots
-# then ssh into the machine as ubuntu:<new passwd>
+$ sudo reboot
+# wait while it reboots then ssh into the machine as ubuntu:<new passwd>
 $ sudo cat /proc/device-tree/model
 ```
-This should return 'MangoPi MQ Pro'
+This should return `MangoPi MQ Pro`
 
-### Update
+### Update 
 ```console
 $ apt update
 ```
