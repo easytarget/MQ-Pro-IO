@@ -47,20 +47,20 @@ The WiFi module will be detected, but will not connect to any networks unless pr
 You will need a suitable machine to download the image file to, with a SD card writer so the image can be written. 
 - The instructions below are for a generic Linux system with a sd card writer.
   - As ever with this sort of operation make *absolutely* sure you are using the correct disk device when writing.
-  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot om my system.
-- Windows users need to ignore the linux steps and use a tool such as Belena Etcher, or similar, before skipping to the console network config section.
+  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot om *my* system.
+- Windows users need to ignore the linux steps and use a tool such as Belena Etcher or similar to burn the SD card, before skipping to [first boot](#first-boot).
 
 Get the image file; (as of 2-Sep-2024 the url below works).
 ```console
 $ wget https://cdimage.ubuntu.com/releases/noble/release/ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz
 ```
 
-Unpack and copy the deownloaded image to the SD card:
+Unpack and copy the downloaded image to the SD card:
 ```console
 $ xzcat ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz | sudo dd bs=8M conv=fsync status=progress of=/dev/mmcblk0
 ```
 
-If you are going to configure Wifi/Network via the console, or using a USB Ethernet adapter you can skip to `First Boot`, below.
+If you are going to configure Wifi/Network via the console or using a USB Ethernet adapter you can skip to [`First Boot`](#first-boot) below.
 
 #### Preconfiguring WiFi networks
 
@@ -68,12 +68,10 @@ Mount the SD card you just created:
 ```console
 $ sudo mount /dev/mmcblk1p1 /mnt
 ```
-
 Create a new network config file that will be applied at first init:
 ```console
 $ sudo vi /mnt/etc/cloud/cloud.cfg.d/55_net.cfg
 ```
-
 It should have the following contents:
 ```yaml
 network:
@@ -97,23 +95,24 @@ Unmount the filesystem so that it is synced properly.
 ```console
 $ sudo umount /mnt
 ```
+Eject the SD card.
 
 #### First Boot
 Insert the SD card into the MQ Pro and BOOT.
-- First boot is SLOW. It will take 5+ minutes before anything appears on HDMI.
-  - This is where, if you have a serial adapter, it is useful for following progress.
-- The HDMI console first appears after several minutes, appears to freeze soon after, but recovers after a while when the login prompt appears.
+- First boot is SLOW. It will take 5+ minutes before anything useful appears on HDMI.
+  - This is where, if you have a serial adapter, it is handy for following progress.
+- The HDMI console first appears after several minutes but then freezes soon after, it recovers after a while when the login prompt appears.
 
-Once the maching has booted you can login on console, or via ssh, as `ubuntu:ubuntu` and follow the mandatory instructions to change password.
+Once the machine has booted you can login on console or ssh as `ubuntu:ubuntu`, and follow the mandatory instructions to change password.
 
-#### WiFi config after boot
-If you are setting up WiFI after first boot you can use `netplan` to config the WiFi.
+#### WiFi config after first boot
+If you are setting up WiFI *after* first boot you can use [`netplan`](https://netplan.io) to configure the WiFi.
 
 Create and edit a file in the netplan config:
 ```console
 $ sudo vi /etc/netplan/55-wifi.yaml
 ```
-The contents of this are **identical** to the [precofigured WiFi](#preconfiguring-wifi-networks) setup given above.
+The contents of this are ***identical*** to the [precofigured WiFi](#preconfiguring-wifi-networks) setup given above.
 - Copy the `yaml` definition given there to this file and edit with your details.
 - The comments for the file there also apply here.
 
@@ -134,14 +133,12 @@ Boot-Script-Path: /boot/boot.scr
 U-Boot-Script-Name: bootscr.uboot-generic
 Required-Packages: u-boot-tools
 ```
-
-This adds new entry for the MQ Pro based on the default Lichhee image in `/usr/share/flash-kernel/db/all.db` but with the correct name and device tree.
+This adds a new custom entry for the MQ Pro based on the default Lichee definition in `/usr/share/flash-kernel/db/all.db`, but with the correct name and device tree.
 
 Make this the default with:
 ```console
 ubuntu@ubuntu:~$ sudo echo 'MangoPI MQ pro' > /etc/flash-kernel/machine
 ```
-
 We now apply this by running `flash-kernel` manually (it is run automatically by dpkg whenever kernel images are (re)installed).
 ```console
 ubuntu@ubuntu:~$ sudo flash-kernel
@@ -152,11 +149,10 @@ Installing new sun20i-d1-mangopi-mq-pro.dtb.
 System running in EFI mode, skipping.
 ```
 Reboot the system and you will be using the default (vanilla) device tree.
-
 ```console
 ubuntu@ubuntu:~$ sudo reboot
-# wait!
-ssh into the machine as ubuntu:<new passwd>
+# wait while it reboots
+# then ssh into the machine as ubuntu:<new passwd>
 $ sudo cat /proc/device-tree/model
 ```
 - Should return 'MangoPi MQ Pro'
@@ -164,33 +160,28 @@ $ sudo cat /proc/device-tree/model
 #### You can now update as normal
 ```console
 $ apt update
-# let this run, slow on this machine, especially the first run
-# will eventually tell you that a lot of packages need updating
-apt update
-# You may see packages 'deferred due to phasing', this is quite normal, an artifact of Ubuntu's build system, and can safely be ignored.
-# This may be a good time to have lunch.
+# Let this run, slow on this machine, especially the first run
+# It will eventually tell you that a lot of packages need updating
+$ apt upgrade
 ```
+You may see packages 'deferred due to phasing', this is quite normal, an artifact of Ubuntu's build system. These can safely be ignored.
 
 When this completes reboot again, or finish the BT setup below first since it also needs a reboot.
 
 #### Setup Bluetooth adapter and status LED
 Get the Bluetooth firmware files, they can be found online, but thee is a copy in my repo for convenience.
-
 ```console
 $ git clone https://github.com/easytarget/MQ-Pro-IO.git
 ```
-
 Copy Bluetooth firmware to the system firmware tree.
 ```console
 $ sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
 ```
-
  Before you reboot to apply these you shpule also install `bluez`, which allows you to use `bluetoothctl` to connect and pair,etc
 ```console
 $ sudo apt install bluez
 $ sudo reboot
 ```
-
 # set up a service for the activity light
 ```console
 $ sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
@@ -198,12 +189,10 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl enable --now mqpro-status-led.service
 ```
 The Status LED should now be continually flashing with Network activity, there is more on controlling this below.
-
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
 
 ![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
-
 # Device Trees
 In the install steps above we reconfigure the system to use the correct MangoPI MQ pro device tree instead of the Sipeed Lichee RV one.
 
