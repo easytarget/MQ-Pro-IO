@@ -1,5 +1,7 @@
 # MangoPI MQ Pro Device Trees for Bluetooth and GPIO
-### The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz, 1Gb SBC, in a Pi-Zero form factor.
+
+The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz CPU, with 1Gb RAM, HDMI and Wifi, in a Pi-Zero form factor Single Board Computer.
+
 ## This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
 The `24.04.1` is a LTS+ release from Ubuntu and should provide 5+ years of updates. 
@@ -87,7 +89,7 @@ network:
 - Replace 'SSID' and 'PASSWORD' with your details, multiple ssid/password line pairs are allowed.
 - This is for a very simple 'connect to accesspoint' scenario.
   - The Netplan syntax allows almost any possible Network setup to be preconfigured!
-  - See the (Netplan Documentation)[https://netplan.readthedocs.io/en/stable/examples/] for lots of examples and the full syntax.
+  - See the [Netplan Documentation](https://netplan.readthedocs.io/en/stable/examples/) for lots of examples and the full syntax.
 - After first boot this file will be copied, directly, to `/etc/netplan/50-cloud-init.yaml`.
   - If you made a mistake in the config, or need to change details, edit it in `/etc/netplan/` and use `netplan try` to test the new configuration.
 
@@ -111,13 +113,13 @@ Create and edit a file in the netplan config:
 ```console
 $ sudo vi /etc/netplan/55-wifi.yaml
 ```
-The contents of this are **identical** to the (precofigured WiFi)[#preconfiguring-wifi-networks] setup given above.
+The contents of this are **identical** to the [precofigured WiFi](#preconfiguring-wifi-networks) setup given above.
 - Copy the `yaml` definition given there to this file and edit with your details.
 - The comments for the file there also apply here.
 
 ### Reconfigure to use MangoPI Device Tree
 
-You should now have bootable machine you can access via the console or SSH. We can now reconfigure this to use the MQ Pro device tree via `(flash-kernel)[https://manpages.debian.org/testing/flash-kernel/flash-kernel.8.en.html)`.
+You should now have bootable machine you can access via the console or SSH. We can now reconfigure this to use the MQ Pro device tree via [`flash-kernel`](https://manpages.debian.org/testing/flash-kernel/flash-kernel.8.en.html).
 
 ```console
 ubuntu@ubuntu:~$ sudo vi /etc/flash-kernel/db
@@ -138,9 +140,9 @@ This adds new entry for the MQ Pro based on the default Lichhee image in `/usr/s
 Make this the default with:
 ```console
 ubuntu@ubuntu:~$ sudo echo 'MangoPI MQ pro' > /etc/flash-kernel/machine
-``
+```
 
-We now apply this by running `flash-kernel` manually (it runs automatically whenever kernel images are (re)installed).
+We now apply this by running `flash-kernel` manually (it is run automatically by dpkg whenever kernel images are (re)installed).
 ```console
 ubuntu@ubuntu:~$ sudo flash-kernel
 Using DTB: allwinner/sun20i-d1-mangopi-mq-pro.dtb
@@ -169,13 +171,13 @@ apt update
 # This may be a good time to have lunch.
 ```
 
-When this completes reboot again, or finish the BT setup below first, since it also needs a reboot.
+When this completes reboot again, or finish the BT setup below first since it also needs a reboot.
 
 #### Setup Bluetooth adapter and status LED
 Get the Bluetooth firmware files, they can be found online, but thee is a copy in my repo for convenience.
 
 ```console
-$git clone https://github.com/easytarget/MQ-Pro-IO.git
+$ git clone https://github.com/easytarget/MQ-Pro-IO.git
 ```
 
 Copy Bluetooth firmware to the system firmware tree.
@@ -183,12 +185,11 @@ Copy Bluetooth firmware to the system firmware tree.
 $ sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
 ```
 
- Before you reboot to apply these you shpule also install `bluez`, which allows uou to use `bluetoothctl` to connect and pair,etc
+ Before you reboot to apply these you shpule also install `bluez`, which allows you to use `bluetoothctl` to connect and pair,etc
 ```console
 $ sudo apt install bluez
 $ sudo reboot
 ```
-In my expreience you need to reboot after installing bluez before the BT devie will be detected.
 
 # set up a service for the activity light
 ```console
@@ -196,7 +197,7 @@ $ sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable --now mqpro-status-led.service
 ```
-The Status LED should now be continually flashing with Network activity
+The Status LED should now be continually flashing with Network activity, there is more on controlling this below.
 
 # My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
