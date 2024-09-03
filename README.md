@@ -174,7 +174,7 @@ You may see packages 'deferred due to phasing', this is quite normal, an artifac
 
 When this completes reboot again, or finish the BT setup below first since it also needs a reboot.
 
-#### Setup Bluetooth adapter and status LED
+### Setup Bluetooth adapter
 Get the Bluetooth firmware files, they can be found online, but thee is a copy in my repo for convenience.
 ```console
 $ git clone https://github.com/easytarget/MQ-Pro-IO.git
@@ -188,7 +188,7 @@ $ sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
 $ sudo apt install bluez
 $ sudo reboot
 ```
-# Set up a service for the activity light
+### Set up a service for the activity light
 ```console
 $ sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
 $ sudo systemctl daemon-reload
@@ -198,10 +198,6 @@ The Status LED should now be continually flashing with Network activity, there i
 
 --------------------------------------------------------------------
 
-# My Motivation:
-My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
-
-![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
 # Device Trees
 In the install steps above we reconfigure the system to use the correct MangoPI MQ pro device tree instead of the Sipeed Lichee RV one.
 
@@ -231,11 +227,14 @@ You can make it flash as network traffic is seen with:
 
 `sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
 
-You can make this permanent by, as root, copying `tools/mqpro-status-led.service` to `/etc/systemd/system/`, running `systemctl daemon-reload` then `systemctl enable --now mqpro-status-led.service`.
-
 Other control options are available, `sudo cat /sys/devices/platform/leds/leds/blue\:status/brightness` shows a list and the current selection. Most do not work or are not very useful; ymmv.
 
-## Using GPIO
+## My Motivation:
+My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
+
+![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
+
+## MQ Pro GPIO
 Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
 
 There are many tutorials on doing this online that give a better explanation than I can here
