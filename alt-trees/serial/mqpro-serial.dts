@@ -22,6 +22,17 @@
 		stdout-path = "serial0:115200n8";
 	};
 
+	hdmi_connector: connector {
+		compatible = "hdmi-connector";
+		type = "c";
+
+		port {
+			hdmi_connector_in: endpoint {
+				remote-endpoint = <&hdmi_out_connector>;
+			};
+		};
+	};
+
 	leds {
 		compatible = "gpio-leds";
 
@@ -70,7 +81,32 @@
 	clock-frequency = <24000000>;
 };
 
+&codec {
+	routing = "Internal Speaker", "HPOUTL",
+		  "Internal Speaker", "HPOUTR";
+	widgets = "Speaker", "Internal Speaker";
+	status = "okay";
+};
+
+&de {
+	status = "okay";
+};
+
 &ehci1 {
+	status = "okay";
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_connector: endpoint {
+		remote-endpoint = <&hdmi_connector_in>;
+	};
+};
+
+&hdmi_phy {
 	status = "okay";
 };
 
@@ -109,13 +145,81 @@
 
 &pio {
 	vcc-pe-supply = <&reg_avdd2v8>;
+
+    /omit-if-no-ref/
+    i2c0_pg12_pins: i2c0-pg12-pins {
+        pins = "PG12", "PG13";
+        function = "i2c0";
+    };
+
+    /omit-if-no-ref/
+    i2c1_pb4_pins: i2c1-pb4-pins {
+        pins = "PB4", "PB5";
+        function = "i2c1";
+    };
+
+    /omit-if-no-ref/
+    i2c2_pb0_pins: i2c2-pb0-pins {
+        pins = "PB0", "PB1";
+        function = "i2c2";
+    };
+
+    /omit-if-no-ref/
+    i2c2_pc0_pins: i2c2-pc0-pins {
+        pins = "PC0", "PC1";
+        function = "i2c2";
+    };
+
+    /omit-if-no-ref/
+    i2c3_pe16_pins: i2c3-pe16-pins {
+        pins = "PE16", "PE17";
+        function = "i2c3";
+    };
+
+    /omit-if-no-ref/
+    uart2_pc0_pins: uart2-pc0-pins {
+        pins = "PC0", "PC1";
+        function = "uart2";
+    };
+
+    /omit-if-no-ref/
+    uart3_pd10_pins: uart3-pd10-pins {
+        pins = "PD10", "PD11";
+        function = "uart3";
+    };
+
+    /omit-if-no-ref/
+    uart3_pd13_rts_cts_pins: uart3-pd13-rts-cts-pins {
+        pins = "PD13", "PD14";
+        function = "uart3";
+    };
+
+    /omit-if-no-ref/
+    uart3_pb6_pins: uart3-pb6-pins {
+        pins = "PB6", "PB7";
+        function = "uart3";
+    };
+
+    /omit-if-no-ref/
+    uart4_pb2_pins: uart4-pb2-pins {
+        pins = "PB2", "PB3";
+        function = "uart4";
+    };
+
+    /omit-if-no-ref/
+    uart5_pb4_pins: uart5-pb4-pins {
+        pins = "PB4", "PB5";
+        function = "uart5";
+    };
 };
 
+/* Disabled
 &spi1 {
-	pinctrl-0 = <&spi1_pd_pins>;
+	pinctrl-0 = <&spi1_pd_pins>;  // conflicts uart3
 	pinctrl-names = "default";
 	status = "okay";
 };
+*/
 
 &i2c0 {
 	pinctrl-0 = <&i2c0_pg12_pins>;
@@ -123,17 +227,27 @@
 	status = "okay";
 };
 
-/*&i2c1 {
-	pinctrl-0 = <&i2c1_pb4_pins>;
+/* Disabled
+&i2c1 {
+	pinctrl-0 = <&i2c1_pb4_pins>;  // conflicts uart5
 	pinctrl-names = "default";
 	status = "okay";
-};*/
+};
+*/
 
-/*&i2c2 {
-	pinctrl-0 = <&i2c2_pc0_pins>;
+/* disabled
+&i2c2 {
+	pinctrl-0 = <&i2c2_pb0_pins>;
 	pinctrl-names = "default";
 	status = "okay";
-};*/
+};
+*/
+
+&i2c2 {
+	pinctrl-0 = <&i2c2_pc0_pins>;  // conflicts uart2
+	pinctrl-names = "default";
+	status = "okay";
+};
 
 &i2c3 {
 	pinctrl-0 = <&i2c3_pe16_pins>;
@@ -162,35 +276,36 @@
 };
 
 &uart2 {
-	pinctrl-0 = <&uart2_pc0_pins>;
-	pinctrl-names = "default";
-	status = "okay";
+    pinctrl-0 = <&uart2_pc0_pins>;
+    pinctrl-names = "default";
+    status = "okay";
 };
 
-/*&uart3 {
-	uart-has-rtscts;
-	pinctrl-0 = <&uart3_pd10_pins>, <&uart3_pd13_rts_cts_pins>;
-	pinctrl-names = "default";
-	status = "okay";
-};*/
+&uart3 {
+    uart-has-rtscts;
+    pinctrl-0 = <&uart3_pd10_pins>, <&uart3_pd13_rts_cts_pins>;  // conflicts spi1
+    pinctrl-names = "default";
+    status = "okay";
+};
+
+/* Disabled
+&uart3 {
+    pinctrl-0 = <&uart3_pb6_pins>;
+    pinctrl-names = "default";
+    status = "okay";
+};
+*/
 
 &uart4 {
-	pinctrl-0 = <&uart4_pb2_pins>;
-	pinctrl-names = "default";
-	status = "okay";
+    pinctrl-0 = <&uart4_pb2_pins>;
+    pinctrl-names = "default";
+    status = "okay";
 };
 
-/*&uart5 {
-	pinctrl-0 = <&uart5_pb4_pins>;
-	pinctrl-names = "default";
-	status = "okay";
-};*/
-
-&pwm {
-	//pinctrl-0 = <&pwm0_pb12_pin>, <&pwm2_pd18_pin>;
-	pinctrl-0 = <&pwm0_pb12_pin>;
-	pinctrl-names = "default";
-	status = "okay";
+&uart5 {
+    pinctrl-0 = <&uart5_pb4_pins>;  // conflicts i2c1
+    pinctrl-names = "default";
+    status = "okay";
 };
 
 &usb_otg {

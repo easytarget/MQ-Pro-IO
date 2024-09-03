@@ -10,7 +10,7 @@ echo "Compiling against headers for $revision"
 
 if [ -d "$revision" ]; then
     echo "Cleaning and Using existing build directory"
-    rm "$revision/*.dts $revision/*.dtsi $revision/*.dtb"
+    rm $revision/*.dts $revision/*.dtsi $revision/*.dtb
 else
     echo "Creating new build directory: $revision"
     mkdir "$revision"
