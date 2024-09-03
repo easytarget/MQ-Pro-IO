@@ -22,7 +22,7 @@ Gpio Header:
                     free (44)  PB12  33 --o o-- 34  gnd                              
  uart3.tx (2500c00.serial:38)   PB6  35 --o o-- 36  PB2   uart4.tx (2501000.serial:34)  
                    free (113)  PD17  37 --o o-- 38  PB3   uart4.rx (2501000.serial:35)  
-                                gnd  39 --o o-- 40  PB4   i2c1.sck (2502400.i2c:36      
+                                gnd  39 --o o-- 40  PB4   i2c1.sck (2502400.i2c:36)     
 
 Other gpio outputs of interest:
 -- PD18: Blue Status Led - gpio (2000000.pinctrl:114)
