@@ -8,11 +8,11 @@ It runs Linux, and is quite usable as a small headless (networked, non GUI) mach
 
 ## This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
-The `24.04.1` is a LTS+ release from Ubuntu and should provide 5+ years of updates. 
+The `24.04.1` is a LTS+ release from Ubuntu and should provide 5+ years of updates.
 
 As such it makes a good choice for an unattended headless device.
 
-Unfortunately there is no [Official Ubuntu image](https://ubuntu.com/download/risc-v) for the MQ Pro, but you can use the image for the Sipeed LicheeRV dock. This has the same SOC as the MQ-Pro, and boots properly.
+Unfortunately there is no [Official Ubuntu image](https://ubuntu.com/download/risc-v) for the MQ Pro, but you can use the image for the SiPeed LicheeRV. This has the same SOC as the MQ-Pro, and boots properly.
 
 Once the LicheeRV image is booted you can swap the device tree it uses for the MQ-Pro one.
 - Vanilla device trees for all current Risc-v platforms are provided as part of the firmware package for each kernel.
@@ -138,7 +138,7 @@ Boot-Script-Path: /boot/boot.scr
 U-Boot-Script-Name: bootscr.uboot-generic
 Required-Packages: u-boot-tools
 ```
-This adds a new custom entry for the MQ Pro based on the default LicheeRV dock definition from `/usr/share/flash-kernel/db/all.db`, but with the correct name and device tree.
+This adds a new custom entry for the MQ Pro based on the default LicheeRV definition from `/usr/share/flash-kernel/db/all.db`, but with the correct name and device tree.
 
 Make this the default with:
 ```console
@@ -209,7 +209,7 @@ A device tree is a file in the `/boot` area file that defines the structure of t
 
 It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
 
-In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up. 
+In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up.
 
 We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
 
@@ -275,37 +275,6 @@ The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 
 `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector.
 
-### Pin Mapping EXAMPLE
-The D1 has 6 internal UARTs, and many pin mappings are possible on the GPIO connector.
-
-When creating a device tree you can create any pin mapping that conforms to this:
-```text
-                        3v3  -- o o -- 5v
-         UART1-RX   PG13 ------ o o -- 5v
-         UART1-TX   PG12 ------ o o -- GND
-         UART3-RX   PB7  ------ o o ------ PB8   UART0-TX,UART1-TX
-                         GND -- o o ------ PB9   UART0-RX,UART1-RX
-         UART1-TX   PD21 ------ o o ------ PB5   UART5-RX
-         UART1-RX   PD22 ------ o o -- GND
-UART2-TX,UART0-TX   PB0  ------ o o ------ PB1   UART0-RX,UART2-RX
-                         3v3 -- o o ------ PD14  UART3-CTS
-                    PD12 ------ o o -- GND
-         UART3-RTS  PD13 ------ o o ------ PC1   UART2-RX
-         UART3-RX   PD11 ------ o o ------ PD10  UART3-TX
-                         GND -- o o ------ PD15
-                    PE17 ------ o o ------ PE16
-         UART1-RTS  PB10 ------ o o -- GND
-         UART1-CTS  PB11 ------ o o ------ PC0   UART2-TX
-                    PB12 ------ o o -- GND
-         UART3-TX   PB6  ------ o o ------ PB2   UART4-TX
-                    PD17 ------ o o ------ PB3   UART4-RX
-                         GND -- o o ------ PB4   UART5-TX
-```
-Notes:
-- `UART0` maps by default to gpio pins 8 and 10 (*PB8* and *PB9*) is the used for the system console by default at boot and you should expect data on it during boot even if you disable it in the device tree as the kernel starts.
-- `UART1` is normally used by the bluetooth adapter, enabling it here will disable bluetooth.
-- `UART1` and `UART3` have flow control lines (rts and cts) available
-- some pins do not map to any UART devices
 
 ## References
 There are reference copies of the MQ PRO schematic and the AllWinner D1 datasheet in the [references](./reference) folder.
