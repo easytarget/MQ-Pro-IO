@@ -1,5 +1,4 @@
-# NOTE
-# I am still finishing changes for Ubuntu 24.04.1
+# Building and installing custom device trees.
 
 This folder contains a `make-trees` script that can build device tree source (`.dts`) files with the correct upstream headers.
 
@@ -33,7 +32,7 @@ sudo apt update
 ```
 You should see a load of new (source) repos being updated, it is slow, let it finish.
 
-## Install the linux sources
+### Get the linux sources
 This should be done as a normal user
 - Note that the command used here `apt source` will download the sources to the current working folder, not a fixed location.
 
@@ -45,13 +44,13 @@ apt source linux-riscv
 Go for a coffee.. ignore the 'git clone' suggestion.
 - This will use ~1.6Gb of space.. so be prepared.
 
-# Updating sources
-If you re-run the `apt source` command in this folder it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
+#### Updating sources
+You can re-run the `apt source` command in this folder it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
 
 -------------------------------------------
 # Building the device tree(s)
 
-As a normal user (the same user used to fetch the sources above) cd to this (`build-trees`) folder.
+Build the sources as a normal user (the same user used to fetch the sources above), in this folder.
 
 #### Terms
 * `.dts` is a top-level Device Tree Source file.
@@ -65,11 +64,12 @@ Rather than modifying the default tree you should copy it to a custom name, eg '
 
 A full-on tutorial for device tree editing is far beyond the scope of both this document and author.
 * The examples show some simple custom modifications.
-* The upstream sources do not define all possible pin mappings, so note how additional pin mappings are added as needed to the custom trees.
+* Compare them to the original to see more.
+  * Note how additional pin mappings had to be provided where the standard `.dtsi` includes do not provide them.
 
 ## Compile the mq-pro dts with the current kernel headers
 
-To compile all the includes and sources simply run `make-trees`.
+To compile all the includes and sources simply run `make-trees.sh`.
 
 This will:
 * Create an output folder named after the kernel version
@@ -112,20 +112,13 @@ Initially we will test the new dtb:
 * If the reboot fails you can either attach a serial adapter to the GPIO pins and select the fallback kernel from the advanced options menu, and then restore the grub config backup once logged in.
   Or (if no serial available) remove the SD card, mount it on another computer and restore the file there.
 
-### Quick check that we have the correct device tree!
-`dtc -I fs /sys/firmware/devicetree/base | grep 'model'`
-* ignore all the 'not a phandle reference' warnings
-* you should see `model = "MangoPi MQ Pro"` at the end
-
-----------------------------------------------------
-## Pin Map tool
 After rebooting you can run **list-pins.py** (see below) to verify the new mappings.
 
 If you have errors rebooting (maybe a corrupt file if you rebuilt it etc..) you need to either boot using a USB serial adapter on the console pins and select the recovery image,  or, in grub, edit the command and revert to the generic `/boot/dtb`.
 As a last resort you may have to remove the SD card, mount the `/boot` partition and edit `grub/grub.cfg` there.
 * !! The 'default' dtb supplied by ubuntu should always be softlinked as `/boot/dtb`, so putting `devicetree      /boot/dtb` in grub in place of the custom `.dtb` should work and is predictable (no version numbers etc).
 
-## Examining the DTB pin mappings:
+## Examining the DTB pin mappings with `list-pins.py`
 In the [tools](../tools) folder there is a python script called `list-pins.py`.
 
 To run the pin list tool you need to be in the tools directory, then run:
@@ -141,34 +134,38 @@ python3 list-pins.py MangoPi-MQ-Pro
 -----------------------------------------------------
 
 # Making Permanent:
-<this needs expanding/fixing>
-<can we do this via flash-kernel? it appears to have an 'override' dtb file config. ?????>
+We can use [flash-kernel](https://github.com/ubports/flash-kernel) to permanently apply our custom device tree. *Flash-kernel* allows an 'override' device tree to be specified that will be used in place of the tree provided by the linux firmware package.
 
-## Old method
+*Flash-kernel* normally searches in the linux firmware library to select the matching kernel version of the `.dtb` file for the machine (as specified in the database). But if a file of the same name is found in the `dtbs` override directory this will be used instead.
 
-(As Root) Edit: `/etc/grub.d/10_linux` line 458 to say:
+If we soft-link our custom `.dtb` file from this directory and re-run `flash-kernel` it will be installed to the `/boot/dtbs/` tree and used at next boot. 
+- As with all the device tree tests above an error here might produce an unbootable machine!
+
+```console
+$ cd /etc/flash-kernel/dtbs/
+$ sudo ln -s /home/<user+path>/MQ-Pro-IO/build-trees/6.8.0-41-generic/6.8.0-41-generic-my-project-mqpro.dtb sun20i-d1-mangopi-mq-pro.dtb
 ```
-  for i in "dtb-mqpro" "dtb-${version}" "dtb-${alt_version}" "dtb"; do
-```
+In this example I am soft linking directly to the `.dtb` I built.
 
-Note that we are adding `dtb-mqpro` to the start of this list, this is the 'search list' for the DTB files, the full section reads:
-```bash
-  dtb=
-  for i in "dtb-mqpro" "dtb-${version}" "dtb-${alt_version}" "dtb"; do
-    if test -e "${dirname}/${i}" ; then
-      dtb="$i"
-      break
-    fi
-  done
+Run `flash-kernel` again: you will see the overide being applied.
+```console
+$ sudo flash-kernel 
+Using DTB: allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Installing /etc/flash-kernel/dtbs/sun20i-d1-mangopi-mq-pro.dtb into /boot/dtbs/6.8.0-41-generic/allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Taking backup of sun20i-d1-mangopi-mq-pro.dtb.
+Installing new sun20i-d1-mangopi-mq-pro.dtb.
+System running in EFI mode, skipping.
 ```
-When Grub next rebuilds it *should* make the new DTB the default for all entries now. (this is untested, as of this writing there have not been any kernel upgrades to test them on)
+After this, reboot to use the new device tree.
 
+--------------------------------------------------------------------------
 
 # references/links:
-https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
-https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
-https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
-https://github.com/ners/MangoPi/tree/d2589d8211a2f9ae57d88f2e2c4d6a449d668f9e/MangoPi/linux/arch/riscv/boot/dts/allwinner
-DTS version that is used in the official armbian image?
-https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
+- https://manpages.ubuntu.com/manpages/focal/man1/dtc.1.html
+- https://forum.armbian.com/topic/29626-mango-pi-mq-pro-d1-device-tree-try-to-okay-serial/
+- https://github.com/torvalds/linux/tree/master/arch/riscv/boot/dts/allwinner
+- https://github.com/ners/MangoPi/tree/d2589d8211a2f9ae57d88f2e2c4d6a449d668f9e/MangoPi/linux/arch/riscv/boot/dts/allwinner
+
+Device Tree that is used in the official armbian image?
+- https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
 
