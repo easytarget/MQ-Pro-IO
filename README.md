@@ -161,7 +161,7 @@ $ sudo cat /proc/device-tree/model
 ```
 This should return `MangoPi MQ Pro`
 
-### Update 
+### First Update
 ```console
 $ apt update
 ```
@@ -239,6 +239,9 @@ Other control options are available, `sudo cat /sys/devices/platform/leds/leds/b
 Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
 
 There are many tutorials on doing this online that give a better explanation than I can here
+
+For some basic GPIO use look at the following:
+https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
 
 ## Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
