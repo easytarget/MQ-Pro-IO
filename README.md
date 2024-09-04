@@ -8,19 +8,16 @@ It runs Linux, and is quite usable as a small headless (networked, non GUI) mach
 
 ## This is a guide for enabling bluetooth and using the MangoPi MQ pro's IO capabilities when running Ubuntu 24.04.1
 
-The `24.04.1` is a LTS+ release from Ubuntu and should provide 5+ years of updates.
-
-As such it makes a good choice for an unattended headless device.
+Ubuntu Server `24.04.1` is a LTS+ release and should provide 5+ years of updates. It is a good choice for an unattended headless device.
 
 Unfortunately there is no [Official Ubuntu image](https://ubuntu.com/download/risc-v) for the MQ Pro, but you can use the image for the SiPeed LicheeRV. This has the same SOC as the MQ-Pro, and boots properly.
 
 Once the LicheeRV image is booted you can swap the device tree it uses for the MQ-Pro one.
-- Vanilla device trees for all current Risc-v platforms are provided as part of the firmware package for each kernel.
-- This means that the mqpro device tree *is* available, but is not the default installed by `flash-kernel` for the image file we use.
-  - You can reconfigure `flash-kernel` with a different default device tree name in config.
-  - This is future proof, each new kernel deliveres a new device tree that will be installed as the kernel is upgraded.
+- The mqpro device tree *is* available in the firmware package, but is not the default installed by `flash-kernel`.
+  - You can reconfigure `flash-kernel` to always select the MQ-Pro tree instead of the Lichee RV default in config.
+- This is future proof, each new kernel release also delivers a new set of device trees that to be installed as the kernel image is created.
 
-The idea of compiling your own Device Tree is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
+The idea of compiling a custom Device Tree is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
 - However, I also have instructions for doing this, for those who like to tinker.
 
 -----------------------------
@@ -53,16 +50,16 @@ If you have a Linux compatible USB Ethernet adapter you can attach that to the s
 You will need a suitable machine to download the image file to, with a SD card writer so the image can be written. 
 - The instructions below are for a generic Linux system with a sd card writer.
   - As ever with this sort of operation make *absolutely* sure you are using the correct disk device when writing.
-  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot onm *my* system. ymmv.
+  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot on *my* system. ymmv.
 - Windows users need to ignore the linux steps and use a tool such as Belena Etcher or similar to burn the SD card, before skipping to [first boot](#first-boot).
 
 Get the image file; (as of 2-Sep-2024 the url below works).
-```console
+```text
 $ wget https://cdimage.ubuntu.com/releases/noble/release/ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz
 ```
 
 Unpack and copy the downloaded image to the SD card:
-```console
+```text
 $ xzcat ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz | sudo dd bs=8M conv=fsync status=progress of=/dev/mmcblk0
 ```
 
@@ -71,13 +68,13 @@ If you are going to configure Wifi/Network via the console or using a USB Ethern
 #### Preconfiguring WiFi networks
 
 Mount the SD card you just created:
-```console
+```text
 $ sudo mount /dev/mmcblk1p1 /mnt
 ```
 Create a new network config file that will be applied at first init:
-```console
-$ sudo vi /mnt/etc/cloud/cloud.cfg.d/55_net.cfg
-```
+
+As root; edit `/mnt/etc/cloud/cloud.cfg.d/55_net.cfg`
+
 It should have the following contents:
 ```yaml
 network:
@@ -91,6 +88,7 @@ network:
             dhcp4: true
 ```
 - Replace 'SSID' and 'PASSWORD' with your details, multiple ssid/password line pairs are allowed.
+- Be careful editing [YAML](https://www.redhat.com/sysadmin/yaml-beginners) files, the indentation must be *exact* and *consistent* (especially; do not mix tabs and spaces!).
 - This is for a very simple 'connect to accesspoint' scenario.
   - The Netplan syntax allows almost any possible Network setup to be preconfigured!
   - See the [Netplan Documentation](https://netplan.readthedocs.io/en/stable/examples/) for lots of examples and the full syntax.
@@ -98,7 +96,7 @@ network:
   - If you made a mistake in the config, or need to change details, edit it in `/etc/netplan/` and use `netplan try` to test the new configuration.
 
 Unmount the filesystem so that it is synced properly.
-```console
+```text
 $ sudo umount /mnt
 ```
 Eject the SD card.
@@ -107,28 +105,34 @@ Eject the SD card.
 Insert the SD card into the MQ Pro and apply power.
 - First boot is SLOW. It will take 5+ minutes before anything useful appears on HDMI.
   - This is where a serial adapter is handy for following progress.
-- The HDMI console first appears after several minutes but then freezes soon after, it recovers after a while when the login prompt appears.
+- The HDMI console first appears after several minutes but then freezes soon after!
+  - Do not panic, wait, HDMI recovers after some time as the login prompt appears.
 
-Once the machine has booted you can login on console or ssh as `ubuntu:ubuntu`, and follow the mandatory instructions to change password.
+Once the machine has booted you can login via console or SSH as `ubuntu:ubuntu`, and follow the mandatory instructions to change password.
 
 #### WiFi config after first boot
 If you are setting up WiFI *after* first boot you can use [`netplan`](https://netplan.io) to configure the WiFi.
 
 Create and edit a file in the netplan config:
-```console
+```text
 $ sudo vi /etc/netplan/55-wifi.yaml
 ```
 The contents of this are ***identical*** to the [precofigured WiFi](#preconfiguring-wifi-networks) setup given above.
 - Copy the `yaml` definition given there to this file and edit with your details.
 - The comments for the file there also apply here.
 
+Apply and test your edits with:
+```text
+$ netplan try
+```
+This will test your new config and reject it after a time unless you actively accept it. A very useful command.
+
 ### Reconfigure to use MangoPI Device Tree
 
 You should now have bootable machine you can access via the console or SSH. We can now reconfigure this to use the MQ Pro device tree via [`flash-kernel`](https://manpages.debian.org/testing/flash-kernel/flash-kernel.8.en.html).
 
-```console
-ubuntu@ubuntu:~$ sudo vi /etc/flash-kernel/db
-```
+As root; edit `/etc/flash-kernel/db`
+
 Append the following after the comments:
 ```text
 Machine: MangoPI MQ pro
@@ -144,7 +148,8 @@ Make this the default with:
 ```console
 ubuntu@ubuntu:~$ sudo echo 'MangoPI MQ pro' > /etc/flash-kernel/machine
 ```
-We now apply this by running `flash-kernel` manually (it is run automatically by dpkg whenever kernel images are (re)installed).
+We now apply this by running `flash-kernel` manually.
+* *flash-kernel* will also be run automatically by `apt` and `dpkg` whenever kernel images are (re)installed.
 ```console
 ubuntu@ubuntu:~$ sudo flash-kernel
 Using DTB: allwinner/sun20i-d1-mangopi-mq-pro.dtb
@@ -154,20 +159,20 @@ Installing new sun20i-d1-mangopi-mq-pro.dtb.
 System running in EFI mode, skipping.
 ```
 Reboot the system and you will be using the default (vanilla) device tree.
-```console
+```text
 $ sudo reboot
-# wait while it reboots then ssh into the machine as ubuntu:<new passwd>
-$ sudo cat /proc/device-tree/model
+# .. wait while it reboots then login again
+$ cat /proc/device-tree/model
 ```
 This should return `MangoPi MQ Pro`
 
 ### First Update
-```console
+```text
 $ apt update
 ```
 Let this run
 - It will eventually tell you that a lot of packages need updating
-```console
+```text
 $ apt upgrade
 ```
 You may see packages 'deferred due to phasing', this is quite normal, an artifact of Ubuntu's build system. These can safely be ignored.
@@ -175,33 +180,38 @@ You may see packages 'deferred due to phasing', this is quite normal, an artifac
 When this completes reboot again, or finish the BT setup below first since it also needs a reboot.
 
 ### Setup Bluetooth adapter
-Get the Bluetooth firmware files, they can be found online, but thee is a copy in my repo for convenience.
-```console
+Get the Bluetooth firmware files, they can be found online, but there is a copy in my repo for convenience.
+```text
 $ git clone https://github.com/easytarget/MQ-Pro-IO.git
 ```
 Copy Bluetooth firmware to the system firmware tree.
-```console
+```text
 $ sudo cp MQ-Pro-IO/files/rtl_bt/* /usr/lib/firmware/rtl_bt/
 ```
  Before you reboot to apply these you should also install `bluez`, which allows you to use `bluetoothctl` to connect and pair,etc
-```console
+```text
 $ sudo apt install bluez
 $ sudo reboot
 ```
 ### Set up a service for the activity light
-```console
+```text
 $ sudo cp MQ-Pro-IO/files/mqpro-status-led.service /etc/systemd/system/
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable --now mqpro-status-led.service
 ```
 The Status LED should now be continually flashing with Network activity, there is more on controlling this below.
 
+## Bask in glory!
+Congratulations! 🎉
+
+You now have a small Risc-V server that should run and be updated for several years. What you do with it is up to you!
+
 --------------------------------------------------------------------
 
 # Device Trees
 In the install steps above we reconfigure the system to use the correct MangoPI MQ pro device tree instead of the Sipeed Lichee RV one.
 
-A device tree is a file in the `/boot` area file that defines the structure of the hardware provided by the chipset on a SBC.
+A device tree is a file in the `/boot/` area that defines the structure of the hardware provided by the chipset and SBC.
 
 It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
 
@@ -219,15 +229,15 @@ But if not; my somewhat limited notes on compiling the tree, plus a script that 
 ## Status LED
 The onboard (blue) status LED can be controlled via the sys tree:
 
-`sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
+`$ sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
 
-`sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
+`$ sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
 
 You can make it flash as network traffic is seen with:
 
-`sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
+`$ sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
 
-Other control options are available, `sudo cat /sys/devices/platform/leds/leds/blue\:status/brightness` shows a list and the current selection. Most do not work or are not very useful; ymmv.
+Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds/blue\:status/brightness` shows a list and the current selection. Most do not work or are not very useful; ymmv.
 
 ## My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
@@ -254,26 +264,21 @@ In the MQ PRO some of these GPIO pins are wired directly to peripherals on the b
 
 The board has a 'standard' Raspberry Pi compatible 40 pin GPIO connector; 12 are reserved for Power lines, leaving 28 GPIO pins available for the user.
 
-Internally, the **D1** has a number of internal hardware interfaces for different signal types; 6xUART for serial, 2xSPI, 4xI2C(TWI), 3xI2Si/PCM (audio), 8xPWM, and some additional units for USB, HDMI, Audio, and more (see the Data sheet)
+Internally, the **D1** has a number of internal hardware interfaces for different signal types; 6x UART for serial, 2x SPI, 4x I2C(TWI), 3x I2S/PCM (audio), 8x PWM, and some additional units for USB, HDMI, Audio, and more (see the Data sheet).
 
-The **D1** chip has an internal 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions.
+The **D1** chip uses a 'pin muxer' to connect pins to signals. Each pin can connect to a (predefined) set of signals, which allows you to map each pin on the GPIO header to multiple possible functions.
 
 You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3.
 - A copy of this table is available here: [reference/d1-pins.pdf](reference/d1-pins.pdf)).
 
-Additionally all pins are high-impedance by default and can be set to a HIGH or LOW digital output. They can all work as digital inputs, and all have configurable pull-up and pull down resistors, and can generate interrupts. PWM and ADC input capable pins are limited, see the datasheet for more.
+All pins are high-impedance digital inputs by default, they all have configurable pull-up and pull-down resistors, and can generate interrupts. Every pin can also be set to a HIGH or LOW digital output. PWM output and ADC input capable pins are limited, see the datasheet for more.
 
 ### Internal interfaces
 The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
-
-`UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
-
-`TWI2` (`I2C2`) can be  mapped to the DVP connector (for touchscreen interfaces) via pins `PE12` and `PE13`.
-
-`TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
-
-`SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector.
-
+* `UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
+* `TWI2` (`I2C2`) can be mapped to the DVP connector (for touchscreen interfaces) via pins `PE12` and `PE13`.
+* `TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
+* `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector.
 
 ## References
 There are reference copies of the MQ PRO schematic and the AllWinner D1 datasheet in the [references](./reference) folder.
