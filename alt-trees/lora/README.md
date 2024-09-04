@@ -1,10 +1,10 @@
-# A device tree for my LORA hat..
+# A device tree for my LORA HAT..
 * Brings a UART out for talking to the HAT
+* Leaves pins `7`, `13` and `15` free since these are used to control and monitor the HAT
 * Has the SPI interface in case I add a screen, and an I2C interface for talking to peripherals.
-* Otherwise unassigned..
 
-nb: screen is https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)
-
+Nb: screen is https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)
+```
                MangoPI MQ Pro GPIO header (dtb name: MangoPi MQ Pro)
 
 Gpio Header:
@@ -36,3 +36,4 @@ Other gpio outputs of interest:
 Notes:
 - I2C pins 3,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3
 - The Status LED (PD18) is common with the LED_PWM pin on the DSI/LVDS output
+```
