@@ -1,13 +1,13 @@
 # Building and installing custom device trees.
 
-This folder contains a `make-trees` script that can build device tree source (`.dts`) files with the correct upstream headers.
+This folder contains a `make-trees` script that can build device tree source (`.dts`) files against the correct upstream headers and device tree includes.
 
 ## Preparation / requirements
 
 ### Compile and make tooling
 You need `build-essential` installed:
 ```console
-apt install build-essential
+$ apt install build-essential
 ```
 *This will take a while.. as will most commands described here!*
 
@@ -28,24 +28,24 @@ Save and exit editor.
 
 Run
 ```console
-sudo apt update
+$ sudo apt update
 ```
 You should see a load of new (source) repos being updated, it is slow, let it finish.
 
 ### Get the linux sources
 This should be done as a normal user
-- Note that the command used here `apt source` will download the sources to the current working folder, not a fixed location.
+- Note that the command used here `apt source` will download the sources to the current working folder, not a fixed location, and is intended to be run as a normal user.
 
 We download the sources into the [sources](../sources) repo in this folder:
-```console
-cd source
-apt source linux-riscv
+```text
+$ cd source
+$ apt source linux-riscv
 ```
 Go for a coffee.. ignore the 'git clone' suggestion.
 - This will use ~1.6Gb of space.. so be prepared.
 
 #### Updating sources
-You can re-run the `apt source` command in this folder it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
+You can re-run the `apt source` command in this folder and it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
 
 -------------------------------------------
 # Building the device tree(s)
@@ -72,12 +72,12 @@ A full-on tutorial for device tree editing is far beyond the scope of both this 
 To compile all the includes and sources simply run `make-trees.sh`.
 
 This will:
-* Create an output folder named after the kernel version
-* Pre-compile all the source and include files in the current folder into the output folder using the correct kernel headers.
+* Create an output folder named after the kernel version, or clean an existing output folder.
+* Pre-compile all the source and include files in the current folder into the output folder using the current kernel headers.
 * In the output folder it then compiles *all* the `.dts` files present, and prefixes the output `.dtb` files with the kernel version.
 
 ```console
-ubuntu@ubuntu:~/MQ-Pro-IO/build-trees$ ./make_dtb.sh
+$ ./make_dtb.sh
 Compiling against headers for 6.8.0-41-generic
 Creating new build directory: 6.8.0-41-generic
 Precompiling all includes in build root into 6.8.0-41-generic build directory
@@ -99,16 +99,18 @@ Compiling all device tree sources in 6.8.0-41-generic build directory
 # Test Installing self-built DTB's
 
 ### Move dtb into the boot tree
-* move the `.dtb` file into the `/boot` folder: `sudo mv 6.8.0-41-generic-my-project-mqpro.dtb /boot/dtbs`
-* make a soft link in `/boot` to this: `sudo ln -s dtbs/6.8.0-41-generic-my-project-mqpro.dtb /boot/dtb-mqpro`
+* move the `.dtb` file into the `/boot` folder: eg: `$ sudo mv 6.8.0-41-generic-my-project-mqpro.dtb /boot/dtbs`
+* make a soft link in `/boot` to this: `$ sudo ln -s dtbs/6.8.0-41-generic-my-project-mqpro.dtb /boot/dtb-mqpro`
 
 ### Set up Grub to test boot the new DTB
 Initially we will test the new dtb:
-* backup the grub config: `sudo cp /etc/grub/grub.cfg /etc/grub/grub.cfg.generic-dtb`
-* `sudo vi /etc/grub/grub.cfg`  (or use nano if you prefer)
-  Find the 1st `menuentry` section (the default Ubuntu one) and edit the `devicetree` line to look like:
-  `devicetree      /boot/dtb-mqpro`
-* Reboot (`sudo reboot`) (remember the mq-pro is sloooow to reboot ;-) )
+* backup the grub config: `$ sudo cp /etc/grub/grub.cfg /etc/grub/grub.cfg.mybackup`
+* `$ sudo vi /etc/grub/grub.cfg`  (or use nano if you prefer)
+  * Find the 1st `menuentry` section (the default Ubuntu one) and edit the `devicetree` line to look like:
+```text
+devicetree      /boot/dtb-mqpro
+```
+* Reboot (`$ sudo reboot`)
 * If the reboot fails you can either attach a serial adapter to the GPIO pins and select the fallback kernel from the advanced options menu, and then restore the grub config backup once logged in.
   Or (if no serial available) remove the SD card, mount it on another computer and restore the file there.
 
@@ -123,7 +125,7 @@ In the [tools](../tools) folder there is a python script called `list-pins.py`.
 
 To run the pin list tool you need to be in the tools directory, then run:
 ```console
-python3 list-pins.py MangoPi-MQ-Pro
+$ python3 list-pins.py MangoPi-MQ-Pro
 ```
 * The script requires root acces (via sudo) to read the pin maps.
 * Running the script produces the same map I use in this documentation.
@@ -131,7 +133,14 @@ python3 list-pins.py MangoPi-MQ-Pro
   * eg it can say 'pinX and pinY are mapped to UART2', but cannot identify which pin is the TX and which is the RX; a limitation of the data, my apologies..
   * You therefore need to reference the [D1 pin mapping table](../reference/d1-pins.pdf) to get the exact functions for pins when running this for yourself.
 * The README files uploaded for alternate device trees *have been manually edited* to note full pin function for convenience.
------------------------------------------------------
+
+### Cleanup test
+Once you are happy with the test you should make the change permanent as described below.
+* Before you do the permanent install you *must* restore the backup copy of the grub config: `$ sudo mv /etc/grub/grub.cfg.mybackup /etc/grub/grub.cfg`
+* Once that is done you can also clean up any test `.dtb` files you manually placed in `/boot/`, and the softlink to them. 
+* *Do not remove the files without restoring the grub config, it will leave the system unbootable!*
+
+----------------------------------------------------
 
 # Making Permanent:
 We can use [flash-kernel](https://github.com/ubports/flash-kernel) to permanently apply our custom device tree. *Flash-kernel* allows an 'override' device tree to be specified that will be used in place of the tree provided by the linux firmware package.
@@ -141,7 +150,7 @@ We can use [flash-kernel](https://github.com/ubports/flash-kernel) to permanentl
 If we soft-link our custom `.dtb` file from this directory and re-run `flash-kernel` it will be installed to the `/boot/dtbs/` tree and used at next boot. 
 - As with all the device tree tests above an error here might produce an unbootable machine!
 
-```console
+```text
 $ cd /etc/flash-kernel/dtbs/
 $ sudo ln -s /home/<user+path>/MQ-Pro-IO/build-trees/6.8.0-41-generic/6.8.0-41-generic-my-project-mqpro.dtb sun20i-d1-mangopi-mq-pro.dtb
 ```
@@ -157,6 +166,10 @@ Installing new sun20i-d1-mangopi-mq-pro.dtb.
 System running in EFI mode, skipping.
 ```
 After this, reboot to use the new device tree.
+
+A *flash-kernel* installs a full copy of the `.dtb` into the `/boot/` area, so deleting or moving the build folder will not 'break' bootup, but it *will* break kernel image rebuilds when `dpkg` tries to re-run the *flash-kernel* command and the softlink target has disappeared. Be warned!
+
+It is good practice to keep the build repo and (periodically) update the dtb when new kernels becme available. But Ubuntu 24.04.1 is a LTS release, and the DTB should be stable going forward so you may not find it necesscary.
 
 --------------------------------------------------------------------------
 
