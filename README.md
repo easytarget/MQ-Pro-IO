@@ -31,6 +31,7 @@ If you have set up SD card based systems before the following should feel famili
 
 ### Notes
 Unfortunately HDMI only starts very late in the boot process, you cannot use it to select GRUB options, and the console is not usable until the boot is complete.
+- You may see some output appear and then it freezes, this is normal. It will recover in time for the `login: ` prompt.
 - Once the console login is available You can use a USB keyboard with it, and install `gpm` to get a working mouse. 
 - Once I had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
 
