@@ -53,7 +53,6 @@ If you have a Linux compatible USB Ethernet adapter you can attach that to the s
 You will need a suitable machine to download the image file to, with a SD card writer so the image can be written. 
 - The instructions below are for a generic Linux system with a sd card writer.
   - As ever with this sort of operation make *absolutely* sure you are using the correct disk device when writing.
-  - The example here assumes `/dev/mmcblk0`, which is the inbuilt SD card slot on *my* system. ymmv.
 - Windows users need to ignore the linux steps and use a tool such as Belena Etcher or similar to burn the SD card, before skipping to [first boot](#first-boot).
 
 Get the image file; (as of 2-Sep-2024 the url below works).
@@ -63,7 +62,7 @@ $ wget https://cdimage.ubuntu.com/releases/noble/release/ubuntu-24.04.1-preinsta
 
 Unpack and copy the downloaded image to the SD card:
 ```text
-$ xzcat ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz | sudo dd bs=8M conv=fsync status=progress of=/dev/mmcblk0
+$ xzcat ubuntu-24.04.1-preinstalled-server-riscv64+licheerv.img.xz | sudo dd bs=8M conv=fsync status=progress of=/dev/<SD_DEVICE_HERE>
 ```
 
 If you are going to configure Wifi/Network via the console or using a USB Ethernet adapter you can skip to [`First Boot`](#first-boot) below.
