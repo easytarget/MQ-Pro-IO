@@ -13,11 +13,13 @@ Ubuntu Server `24.04.1` is a LTS+ release and should provide 5+ years of updates
 Unfortunately there is no [Official Ubuntu image](https://ubuntu.com/download/risc-v) for the MQ Pro, but you can use the image for the SiPeed LicheeRV. This has the same SOC as the MQ-Pro, and boots properly.
 
 Once the LicheeRV image is booted you can swap the device tree it uses for the MQ-Pro one.
-- The mqpro device tree *is* available in the firmware package, but is not the default installed by `flash-kernel`.
-  - You can reconfigure `flash-kernel` to always select the MQ-Pro tree instead of the Lichee RV default in config.
-- This is future proof, each new kernel release also delivers a new set of device trees that to be installed as the kernel image is created.
+- The correct MangoPI MQ Pro device tree *is* available in the firmware package, but is not the default installed by `flash-kernel`.
+  - It is provided in the `linux-modules-<kernel version>` package for each kernel.
+- You can reconfigure `flash-kernel` to always select the MQ-Pro tree instead of the Lichee RV default in config.
+  - This is future proof
+  - Each new kernel release also delivers a new set of device trees that to be installed as the kernel image is created.
 
-The idea of compiling a custom Device Tree is depreciated in favor of the vanilla mqpro devicetree and using gpiod and pinctl to setup devices.
+The idea of compiling a custom Device Tree is depreciated in favor of the vanilla MQ-Pro device tree and using [gpiod](https://www.kernel.org/doc/html/v4.17/driver-api/gpio/index.html) and [pinctl](https://www.kernel.org/doc/html/v4.15/driver-api/pinctl.html) to setup devices.
 - However, I also have instructions for doing this, for those who like to tinker.
 
 -----------------------------
@@ -158,7 +160,9 @@ Taking backup of sun20i-d1-mangopi-mq-pro.dtb.
 Installing new sun20i-d1-mangopi-mq-pro.dtb.
 System running in EFI mode, skipping.
 ```
-Reboot the system and you will be using the default (vanilla) device tree.
+This installs a copy of the `.dtb` into the `/boot/dtbs/` tree and softlinks it there to be the default.
+
+Reboot the system and you will be using the new device tree.
 ```text
 $ sudo reboot
 # .. wait while it reboots then login again
@@ -222,11 +226,9 @@ We do not need to modify the device tree used by U-Boot, or the kernel init proc
 ## Roll Your Own Device Tree
 Hopefully you can do what you need with the default tree, and dynamically create your devices on it via `gpiod` and `pinctl`.
 
-But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder.
+But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder. There are also instructions on how to configure *flash-kernel* to override the upstream trees with localally built ones.
 
-# Using the trees
-
-## Status LED
+## Status LED notes:
 The onboard (blue) status LED can be controlled via the sys tree:
 
 `$ sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
@@ -245,9 +247,7 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 ![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 ## MQ Pro GPIO
-Providing a full GPIO how-to is beyond the scope of this document, I use GPIOd to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
-
-There are many tutorials on doing this online that give a better explanation than I can here
+Providing a full GPIO how-to is beyond the scope of this document, I use LGPIO in python to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
 
 For some basic GPIO use look at the following:
 https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
