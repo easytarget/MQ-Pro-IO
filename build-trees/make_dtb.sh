@@ -41,3 +41,5 @@ for file in `ls *.dts`; do
     echo "  $revision/$file -> $revision/$revision-$out"
     $dtc $file > $revision-$out
 done
+
+echo "Success. Consider running link-latest.sh to make permanent (see docs)"
