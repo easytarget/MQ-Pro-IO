@@ -1,7 +1,7 @@
 from subprocess import run,PIPE
 from importlib import import_module
 from sys import path,argv
-path.append('maps')
+from pathlib import Path
 
 '''
     Gathers the pinmux table and parses it's output to a more human form, with pin designator included
@@ -13,7 +13,12 @@ if len(argv) == 2:
     model = argv[1]
 else:
     model = dtname
+
+source_path = Path(__file__).resolve()
+source_dir = source_path.parent
+path.append(str(source_dir) + '/maps')
 board = import_module(model.replace(' ','-'))
+
 muxindex = [pin[0] for pin in board.gpio]
 for pin in board.gpio:
     pin.append('')
