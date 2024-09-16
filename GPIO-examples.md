@@ -5,11 +5,11 @@ This guide assumes you have a correctly installed and set up board, with the cor
 
 ## General Purpose GPIO (digital read/write)
 ***todo***, Controlling using python + lgpio.
+
 For now; look at the great guide here: https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
 
 ### Status LED notes:
 The onboard (blue) status LED is attached to gpio `PD18`, and can be controlled via the sys tree:
-- PD18 is also used as the LED_PWM pin on the DSI/LVDS output
 
 `$ sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
 
@@ -21,14 +21,17 @@ You can make it flash as network traffic is seen with:
 
 Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds/blue\:status/brightness` shows a list and the current selection. Most do not work or are not very useful; ymmv.
 - `PD18` can also be mapped to `pwm-2` in a modified device tree if you want to manually control the LED and vary it's brightness.
+- PD18 is also used as the LED_PWM pin on the DSI/LVDS output
 
 ## PWM
-***todo*** need to attach pins to pwm channels via DT and then control. Might need (legacy) `/sys/class` control, pwm control in userland seems like a WIP for linux at present.
+***todo*** need to attach pins to pwm channels via DT and then control.
+- Might need (legacy) `/sys/class` control, pwm control in userland seems like a WIP for linux at present.
+- The `lgpio` python library provides a soft (bit-bang) PWM interface
 
 ## I2C
 **Working**! I have read temperature, pressure and humidity from a BME280 sensor connected to pins 3 and 5.
 
-Install [pypi:bme280](https://pypi.org/project/bme280/) and it's requirement smbus-cffi.
+Install [`pypi:bme280`](https://pypi.org/project/bme280/) and it's requirement `smbus-cffi`.
 * I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing globally.
 * Add the user to the group 'i2c' and re-login to access as a user
 ```
