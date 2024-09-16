@@ -22,8 +22,28 @@ Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds
 <todo>, need to attach pins to pwm channels via DT and then control. Might need (legacy) `/sys/class` control, pwm control in userland seems like a WIP for linux at present.
 
 ## I2C
-Working. I have read temperatures from a BME280 sensor via pins 3 and 5.
-<todo>, writeup
+Working! I have read temperatures from a BME280 sensor via pins 3 and 5.
+
+Install [pypi:bme280](https://pypi.org/project/bme280/) and it's requirement smbus-cffi.
+
+I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing globally.
+```
+$ sudo apt install python3-venv python3-dev
+$ python3 -m venv env
+$ source env/bin/activate
+(env) $ pip install --upgrade pip
+(env) $ pip install --upgrade smbus-cffi bme280
+
+# The bme280 library provides a python API, and a commandline tool
+(env) $ which read_bme280
+<cwd>/env/bin/read_bme280
+
+# My bme280 defaults to address 0x76, and I'm using I2C0
+(env) $ read_bme280 --i2c-bus 0 --i2c-address 0x76
+1024.85 hPa
+  56.84 %
+  21.59 C
+```
 
 ## SPI
 Not (yet!) Working. No devices appear at `/dev/spi*`
@@ -37,5 +57,5 @@ cpu_thermal-virtual-0
 Adapter: Virtual device
 temp1:        +19.4°C  
 ```
-<todo>, this is nonsense.. I'm testing and the attached BME280 sensor is showing room temp as 22C..
-- check out the device tree, maybe a bad offset.
+**HOWEVER** : this is nonsense.. I'm testing and the attached BME280 sensor is showing room temp as 22C..
+- check out the device tree, maybe a bad offset. Or some kind of calibration/reference voltage needed?
