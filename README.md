@@ -228,18 +228,6 @@ Hopefully you can do what you need with the default tree, and dynamically create
 
 But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder. There are also instructions on how to configure *flash-kernel* to override the upstream trees with localally built ones.
 
-## Status LED notes:
-The onboard (blue) status LED can be controlled via the sys tree:
-
-`$ sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
-
-`$ sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
-
-You can make it flash as network traffic is seen with:
-
-`$ sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
-
-Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds/blue\:status/brightness` shows a list and the current selection. Most do not work or are not very useful; ymmv.
 
 ## My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
@@ -249,9 +237,9 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 ## MQ Pro GPIO
 Providing a full GPIO how-to is beyond the scope of this document, I use LGPIO in python to do this. 
 
-<TODO> create a seperate guide doc [GPIO-examples](GPIO-examples) showing my GPIO tests/use.
+**IN PROGRESS** : create a seperate guide doc [GPIO-examples](GPIO-examples) showing my GPIO tests/use.
 
-For some other basic GPIO use look at the following:
+For some other basic GPIO use advise look at the following:
 https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
 
 ## Allwinner D1 GPIO pins
