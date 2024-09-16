@@ -278,7 +278,7 @@ The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 * `UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
 * `TWI2` (`I2C2`) can be mapped to the DVP connector (for touchscreen interfaces) via pins `PE12` and `PE13`.
 * `TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
-* `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector.
+* `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector. It is present but `disabled` in the device tree by default.
 
 ## References
 There are reference copies of the MQ PRO schematic and the AllWinner D1 datasheet in the [references](./reference) folder.
