@@ -223,8 +223,21 @@ In this guide we only replace the device tree used by the kernel when Linux is s
 
 We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
 
+## Device Tree Overlays
+The 'vanilla', empty, device tree we installed above only enables the console UART on the GPIO connector, no other pins are assigned.
+
+In order to enable devices (such as UART, I2C, SPI, etc) on the MQ pro's GPIO connector you need to 'add' an assignment to it via a 'Device Tree Overlay'
+
+**I am working on this but do not (yet) have any working examples**
+
+I will update this guide once I have worked it out.. 
+
+***In the meantime you can proceed with a full device tree modification***
+
+See below:
+
 ## Roll Your Own Device Tree
-Hopefully you can do what you need with the default tree, and dynamically create your devices on it via `gpiod` and `pinctl`.
+Hopefully you can do what you need with the default tree and an overlay.
 
 But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder. There are also instructions on how to configure *flash-kernel* to override the upstream trees with localally built ones.
 
