@@ -247,9 +247,11 @@ My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the d
 ![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
 
 ## MQ Pro GPIO
-Providing a full GPIO how-to is beyond the scope of this document, I use LGPIO in python to do this. But have also used direct pinctl control via the `/sys/class/gpio` tree.
+Providing a full GPIO how-to is beyond the scope of this document, I use LGPIO in python to do this. 
 
-For some basic GPIO use look at the following:
+<TODO> create a seperate guide doc [GPIO-examples](GPIO-examples) showing my GPIO tests/use.
+
+For some other basic GPIO use look at the following:
 https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
 
 ## Allwinner D1 GPIO pins
@@ -270,8 +272,39 @@ The **D1** chip uses a 'pin muxer' to connect pins to signals. Each pin can conn
 
 You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4-3.
 - A copy of this table is available here: [reference/d1-pins.pdf](reference/d1-pins.pdf)).
+- Note: Allwinner use the acronym **TWI** (Two Wire Interface) in place of **I2C** in their documentation.
 
 All pins are high-impedance digital inputs by default, they all have configurable pull-up and pull-down resistors, and can generate interrupts. Every pin can also be set to a HIGH or LOW digital output. PWM output and ADC input capable pins are limited, see the datasheet for more.
+
+## MQ Pro GPIO connector
+The following shows all the function combinations available on the MQ Pro GPIO connector.
+* **All** pins can also do Digital Input and Output when not assigned to a specific internal interface.
+* I do not list all interface types here, eg SPI (audio) and IR functions are available on GPIO pins but not covered in this guide. Creating overlays and using them is quite possible but I do not need these features and have limited resources, so I leave it as an excercise for others / the future. Sorry..
+
+```text
+Gpio Header:
+                                        func   des  pin       pin  des   func
+                                               3v3   1 --o o-- 2   5v
+                   i2c0-sda, uart1-rx, pwm-2  PG13   3 --o o-- 4   5v
+                   i2c0-scl, uart1-tx, pwm-0  PG12   5 --o o-- 6   gnd
+                          i2c3-sda, uart3-rx   PB7   7 --o o-- 8   PB8   i2c2-sck, spi1-hold, uart0-tx, uart1-tx, pwm-5
+                                               gnd   9 --o o-- 10  PB9   i2c2-sda, spi1-miso, uart0-rx, uart1-rx, pwm-6
+                   i2c2-sda, uart1-tx, pwm-5  PD21  11 --o o-- 12  PB5   i2c1-sda, uart5-rx,pwm-0
+                             uart1-rx, pwm-7  PD22  13 --o o-- 14  gnd
+i2c2-sck, spi1-wp, uart0-tx, uart2-tx, pwm-3   PB0  15 --o o-- 16  PB1   i2c2-sda, uart0-rx, uart2-rx, pwm-4
+                                               3v3  17 --o o-- 18  PD14  spi1-hold, uart3-cts
+                         i2c0-sda, spi1-mosi  PD12  19 --o o-- 20  gnd
+                        spi1-miso, uart3-rts  PD13  21 --o o-- 22  PC1   i2c2-sda, uart2-rx
+                          spi1-clk, uart3-rx  PD11  23 --o o-- 24  PD10  spi1-cs, uart3-tx
+                                               gnd  25 --o o-- 26  PD15  spi1-wp
+                                    i2c3-sda  PE17  27 --o o-- 28  PE16  i2c3-sck, pwm-7
+       i2c0-sck, spi1-mosi, uart1-rts, pwm-7  PB10  29 --o o-- 30  gnd
+        i2c0-sda, spi1-clk, uart1-cts, pwm-2  PB11  31 --o o-- 32  PC0   i2c2-sck, uart2-tx
+                              spi1-cs, pwm-0  PB12  33 --o o-- 34  gnd                              
+                   i2s3-sck, uart3-tx, pwm-1   PB6  35 --o o-- 36  PB2   i2c0-sda, uart4-tx
+                                       pwm-1  PD17  37 --o o-- 38  PB3   i2c0-sck, uart4-rx
+                                               gnd  39 --o o-- 40  PB4   i2c1-sck, uart5-tx
+```
 
 ### Internal interfaces
 The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
