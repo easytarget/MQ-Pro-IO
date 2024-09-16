@@ -239,9 +239,6 @@ Providing a full GPIO how-to is beyond the scope of this document, I use LGPIO i
 
 **IN PROGRESS** : create a seperate guide doc [GPIO-examples](GPIO-examples) showing my GPIO tests/use.
 
-For some other basic GPIO use advise look at the following:
-https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
-
 ## Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
 
@@ -265,6 +262,46 @@ You can browse the full range of mappings in the Allwinner D1 datasheet, Table 4
 All pins are high-impedance digital inputs by default, they all have configurable pull-up and pull-down resistors, and can generate interrupts. Every pin can also be set to a HIGH or LOW digital output. PWM output and ADC input capable pins are limited, see the datasheet for more.
 
 ## MQ Pro GPIO connector
+
+### Pinmux assignment
+Each pin on the connector has a 'pinmux' number, these map to the GPIO connector like this:
+```
+Gpio Header:
+   pinmux   des  pin       pin  des   pinmux
+            3v3   1 --o o-- 2   5v
+      205  PG13   3 --o o-- 4   5v
+      204  PG12   5 --o o-- 6   gnd
+       39   PB7   7 --o o-- 8   PB8   40
+            gnd   9 --o o-- 10  PB9   41
+      117  PD21  11 --o o-- 12  PB5   37
+      118  PD22  13 --o o-- 14  gnd
+       32   PB0  15 --o o-- 16  PB1   33
+            3v3  17 --o o-- 18  PD14  110
+      108  PD12  19 --o o-- 20  gnd                              
+      109  PD13  21 --o o-- 22  PC1   65
+      107  PD11  23 --o o-- 24  PD10  106
+            gnd  25 --o o-- 26  PD15  111
+      145  PE17  27 --o o-- 28  PE16  144
+       42  PB10  29 --o o-- 30  gnd
+       43  PB11  31 --o o-- 32  PC0   64
+       44  PB12  33 --o o-- 34  gnd
+       38   PB6  35 --o o-- 36  PB2   34
+      113  PD17  37 --o o-- 38  PB3   35
+            gnd  39 --o o-- 40  PB4   36
+Also:
+  PD18: Blue Status Led - pinmux 114
+```
+
+When controlling pins via the (legacy) `/sys/class/gpio` interface or `lgpio` in Python you need to use this pinmux number when addressing them.
+
+You can query the current pin mapping at any time with:
+```
+$ sudo cat /sys/kernel/debug/pinctrl/2000000.pinctrl/pinmux-pins
+```
+This produces a long output that lists all the D1's gpio pins and states, not just the pins exposed on the GPIO connector.
+* The `list-pins.py` tool in the (tools)[tools] folder uses the output from the above and displays the a diagram of the just the GPIO connector pins and their assignments.
+
+### Functional assignments
 The following shows all the function combinations available on the MQ Pro GPIO connector.
 * **All** pins can also do Digital Input and Output when not assigned to a specific internal interface.
 * I do not list all interface types here, eg SPI (audio) and IR functions are available on GPIO pins but not covered in this guide. Creating overlays and using them is quite possible but I do not need these features and have limited resources, so I leave it as an excercise for others / the future. Sorry..
@@ -292,6 +329,8 @@ i2c2-sck, spi1-wp, uart0-tx, uart2-tx, pwm-3   PB0  15 --o o-- 16  PB1   i2c2-sd
                    i2s3-sck, uart3-tx, pwm-1   PB6  35 --o o-- 36  PB2   i2c0-sda, uart4-tx
                                        pwm-1  PD17  37 --o o-- 38  PB3   i2c0-sck, uart4-rx
                                                gnd  39 --o o-- 40  PB4   i2c1-sck, uart5-tx
+Notes:
+- I2C pins 3,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3
 ```
 
 ### Internal interfaces
