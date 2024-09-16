@@ -299,7 +299,7 @@ You can query the current pin mapping at any time with:
 $ sudo cat /sys/kernel/debug/pinctrl/2000000.pinctrl/pinmux-pins
 ```
 This produces a long output that lists all the D1's gpio pins and states, not just the pins exposed on the GPIO connector.
-* The `list-pins.py` tool in the (tools)[tools] folder uses the output from the above and displays the a diagram of the just the GPIO connector pins and their assignments.
+* The `list-pins.py` tool in the [tools](tools) folder uses the output from the above and displays the a diagram of the just the GPIO connector pins and their assignments.
 
 ### Functional assignments
 The following shows all the function combinations available on the MQ Pro GPIO connector.
