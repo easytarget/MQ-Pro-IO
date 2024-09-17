@@ -168,4 +168,3 @@ It is good practice to keep the build repo and (periodically) update the dtb whe
 
 Device Tree that is used in the official armbian image?
 - https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
-

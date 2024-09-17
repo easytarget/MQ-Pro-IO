@@ -1,4 +1,5 @@
-# MangoPI MQ Pro Install guide for Ubuntu Server 24.04.1
+# MangoPI MQ Pro Install guide
+# - Ubuntu Server 24.04.1
 
 The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz CPU, with 1Gb RAM, HDMI and Wifi, in a Pi-Zero form factor Single Board Computer.
 
@@ -17,10 +18,19 @@ Once the LicheeRV image is booted you can swap the device tree it uses for the M
   - It is provided in the `linux-modules-<kernel version>` package for each kernel.
 - You can reconfigure `flash-kernel` to always select the MQ-Pro tree instead of the Lichee RV default in config.
   - This is future proof
-  - Each new kernel release also delivers a new set of device trees that to be installed as the kernel image is created.
+  - Each new kernel release is accompanied by a corresponding set of device trees that will be installed as the kernel image is created.
 
-The idea of compiling a custom Device Tree is depreciated in favor of the vanilla MQ-Pro device tree and using [gpiod](https://www.kernel.org/doc/html/v4.17/driver-api/gpio/index.html) and [pinctl](https://www.kernel.org/doc/html/v4.15/driver-api/pinctl.html) to setup devices.
-- However, I also have instructions for doing this, for those who like to tinker.
+This default MQ Pro device tree does not assign any of the GPIO pins on the board apart from the serial console on pins `8` and `10` (115200 baud, no parity).
+
+For basic digital I/O this is all you need. Pins can be enabled, read as an input or set to a High / Low output as needed.
+
+The D1 used in the MQ Pro also supports a number of internal interfaces, eg PWM (Pulse Width Modulation), additional UARTs, I2C and SPI devices. In order to use these you need to modify the device tree on boot.
+* Ideally this is done with an 'Overlay' which modifies the default tree and is applied to the kernel at init
+* It can also be done by providing a modified Device Tree at init, with the required changes 'baked in'
+
+Overlays are easiest to use; but are not **yet** covered by this guide. I intend to get them working in the future but time and enthusiasm make this a low priority for me. (watch this space..)
+
+Instead, there is discussion of device trees, pin assignment, and a guide + tooling to build and maintain a custom Device Tree that exposes the interfaces you need. This [comes after](#device_trees) the Install guide.
 
 -----------------------------
 
@@ -32,7 +42,7 @@ If you have set up SD card based systems before the following should feel famili
 ### Notes
 Unfortunately HDMI only starts very late in the boot process, you cannot use it to select GRUB options, and the console is not usable until the boot is complete.
 - You may see some output appear and then it freezes, this is normal. It will recover in time for the `login: ` prompt.
-- Once the console login is available You can use a USB keyboard with it, and install `gpm` to get a working mouse. 
+- Once the console login is available You can use a USB keyboard with it, and install `gpm` to get a working mouse.
 - Once I had bluetooth working I was able to attach and use a bluetooth kbd+mouse.
 
 If you have a USB serial adapter available you can follow the entire boot process
@@ -50,7 +60,7 @@ If you have a Linux compatible USB Ethernet adapter you can attach that to the s
 - You will need to find the assigned IP from router logs, netscan, or looking on the console.
 
 ### Creating SD card
-You will need a suitable machine to download the image file to, with a SD card writer so the image can be written. 
+You will need a suitable machine to download the image file to, with a SD card writer so the image can be written.
 - The instructions below are for a generic Linux system with a sd card writer.
   - As ever with this sort of operation make *absolutely* sure you are using the correct disk device when writing.
 - Windows users need to ignore the linux steps and use a tool such as Belena Etcher or similar to burn the SD card, before skipping to [first boot](#first-boot).
@@ -219,38 +229,35 @@ A device tree is a file in the `/boot/` area that defines the structure of the h
 
 It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
 
-In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up.
+##### Note:
+In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up. We do not modify the device tree used by U-Boot & SPL, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling these components.
 
-We do not need to modify the device tree used by U-Boot, or the kernel init processes, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling anything.
-
-## Device Tree Overlays
+## Device Tree Overlays (Work In Progress)
 The 'vanilla', empty, device tree we installed above only enables the console UART on the GPIO connector, no other pins are assigned.
 
 In order to enable devices (such as UART, I2C, SPI, etc) on the MQ pro's GPIO connector you need to 'add' an assignment to it via a 'Device Tree Overlay'
 
 **I am working on this but do not (yet) have any working examples**
 
-I will update this guide once I have worked it out.. 
-
-***In the meantime you can proceed with a full device tree modification***
-
-See below:
+I will update this guide once I have worked it out;  *in the meantime you can proceed with a full device tree modification* as described below.
 
 ## Roll Your Own Device Tree
-Hopefully you can do what you need with the default tree and an overlay.
+The guide to compiling the tree, scripts to build the them correctly, and link the compiled trees into `/etc/flash_kernel` are in the [build-trees](/build-trees) folder. See the README there for details and examples.
 
-But if not; my somewhat limited notes on compiling the tree, plus a script that handles running the C preprocessor on them (needed to get a working binary) are in the [build-trees](./build-trees) folder. There are also instructions on how to configure *flash-kernel* to override the upstream trees with localally built ones.
-
+The section `MQ Pro GPIO`, below, has information on the available interfaces and pin assignment options. There are example device trees in the [alt-trees](/alt-trees) folder that can be used as templates.
 
 ## My Motivation:
 My MQ PRO is connected to a Waveshare LORA hat, I want to make it work but the default device tree conflicts with some of the pins my HAT uses. So I decided to 'fix' this by putting a better device tree on my board.
 
 ![My Hardware](reference/waveshare_SX1268_LoRa_HAT/overview.jpg)
 
-## MQ Pro GPIO
-Providing a full GPIO how-to is beyond the scope of this document, I use LGPIO in python to do this. 
+---------------------------------------------------------------
 
-**IN PROGRESS** : create a seperate guide doc [GPIO-examples](GPIO-examples) showing my GPIO tests/use.
+# MQ Pro GPIO
+
+The following is a discussion and reference for the MQ Pro GPIO capabilities.
+
+For examples of **using GPIO** see the seperate [GPIO-examples](/GPIO-examples) page showing my GPIO tests and use examples. That is not a definitive guide; Linux GPIO is a complex and evolving topic, it cannot be covered in depth here.
 
 ## Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
@@ -290,7 +297,7 @@ Gpio Header:
       118  PD22  13 --o o-- 14  gnd
        32   PB0  15 --o o-- 16  PB1   33
             3v3  17 --o o-- 18  PD14  110
-      108  PD12  19 --o o-- 20  gnd                              
+      108  PD12  19 --o o-- 20  gnd
       109  PD13  21 --o o-- 22  PC1   65
       107  PD11  23 --o o-- 24  PD10  106
             gnd  25 --o o-- 26  PD15  111
@@ -308,11 +315,11 @@ Also:
 When controlling pins via the (legacy) `/sys/class/gpio` interface or `lgpio` in Python you need to use this pinmux number when addressing them.
 
 You can query the current pin mapping at any time with:
-```
+```console
 $ sudo cat /sys/kernel/debug/pinctrl/2000000.pinctrl/pinmux-pins
 ```
 This produces a long output that lists all the D1's gpio pins and states, not just the pins exposed on the GPIO connector.
-* The `list-pins.py` tool in the [tools](tools) folder uses the output from the above and displays the a diagram of the just the GPIO connector pins and their assignments.
+* The `list-pins.py` tool in the [tools](/tools) folder uses the output from the above and produces an ascii-art diagram of just the GPIO connector pins and their assignments.
 
 ### Functional assignments
 The following shows all the function combinations available on the MQ Pro GPIO connector.
@@ -338,20 +345,20 @@ i2c2-sck, spi1-wp, uart0-tx, uart2-tx, pwm-3   PB0  15 --o o-- 16  PB1   i2c2-sd
                                     i2c3-sda  PE17  27 --o o-- 28  PE16  i2c3-sck, pwm-7
        i2c0-sck, spi1-mosi, uart1-rts, pwm-7  PB10  29 --o o-- 30  gnd
         i2c0-sda, spi1-clk, uart1-cts, pwm-2  PB11  31 --o o-- 32  PC0   i2c2-sck, uart2-tx
-                              spi1-cs, pwm-0  PB12  33 --o o-- 34  gnd                              
+                              spi1-cs, pwm-0  PB12  33 --o o-- 34  gnd
                    i2s3-sck, uart3-tx, pwm-1   PB6  35 --o o-- 36  PB2   i2c0-sda, uart4-tx
                                        pwm-1  PD17  37 --o o-- 38  PB3   i2c0-sck, uart4-rx
                                                gnd  39 --o o-- 40  PB4   i2c1-sck, uart5-tx
-Notes:
-- I2C pins 3,5,27 and 28 (PG13, PG12, PE17 and PE16) have 10K pullup resistors to 3v3
 ```
+- The I2C pins `3`, `5`, `27` and `28` (`PG13`, `PG12`, `PE17` and `PE16`) have 10K pullup resistors to 3v3 on the board. These cannot be disabled, but are useful if you are using I2C.
 
 ### Internal interfaces
 The MQ Pro uses several of the **D1**s interfaces on-board, specifically:
 * `UART1` is used to connect to the the bluetooth device by default (with flow control) using `PG6`, `PG7`, `PG8` and `PG9`. It can be reconfigured onto GPIO pins if bluetooth is not required.
-* `TWI2` (`I2C2`) can be mapped to the DVP connector (for touchscreen interfaces) via pins `PE12` and `PE13`.
-* `TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
 * `SPI0` is mapped to the optional SPI flash chip (not fitted on consumer units), and cannot be mapped to the GPIO connector. It is present but `disabled` in the device tree by default.
+* If you are using LCD panels on the DVP or DSI/LVDS ports these also assign I2C ports for touchscreens etc.
+  * `TWI2` (`I2C2`) can be mapped to the DVP connector via pins `PE12` and `PE13`.
+  * `TWI3` (`I2C3`) can be mapped to the DSI/LVDS connector via pins `PE16` and `PE17`; which also appear on the GPIO connector.
 
 ## References
 There are reference copies of the MQ PRO schematic and the AllWinner D1 datasheet in the [references](./reference) folder.

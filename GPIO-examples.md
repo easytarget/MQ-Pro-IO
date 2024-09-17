@@ -24,9 +24,36 @@ Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds
 - PD18 is also used as the LED_PWM pin on the DSI/LVDS output
 
 ## PWM
-***todo*** need to attach pins to pwm channels via DT and then control.
-- Might need (legacy) `/sys/class` control, pwm control in userland seems like a WIP for linux at present.
-- The `lgpio` python library provides a soft (bit-bang) PWM interface
+There are eight PWM timers available and GPIO pins can be mapped to these.
+- The available mappings are somewhat limited, see the main README to see which pins on the GPIO connector can be used.
+- The example below uses (legacy) `/sys/class` control, which in turn needs root access. PWM control from userland seems like a WIP for linux at present.
+- I have not (yet) investigated using this via `lgpio` in Python.
+
+The following is a shell script that implements a crude LED fader:
+
+The following needs to be run as root. It uses `pwm2` (the `lora` example device tree attaches this to pin 37 on the GPIO connector), you can change this as appropriate.
+
+First, export the PWM interface: `echo 2 > /sys/class/pwm/pwmchip0/export`
+- The node for the interface wil appear at `/sys/class/pwm/pwmchip0/pwm2/`
+- You can stop and detach the interface with: `echo 2 > /sys/class/pwm/pwmchip0/unexport`
+```bash
+#!/bin/bash
+# PWM silly fader
+#
+pwm="/sys/class/pwm/pwmchip0/pwm1"
+
+echo normal > $pwm/polarity
+echo 10000 > $pwm/period
+while true ; do
+    for p in 40 100 400 1000 4000 10000 4000 1000 400 100 40 0 ; do
+        echo -n "."
+        echo $p > $pwm/duty_cycle
+        sleep 0.25
+    done
+    echo
+done
+```
+See the [kernel guide](https://www.kernel.org/doc/html/latest/driver-api/pwm.html#using-pwms-with-the-sysfs-interface) for the parameters we set to assign and control the pin.
 
 ## I2C
 **Working**! I have read temperature, pressure and humidity from a BME280 sensor connected to pins 3 and 5.
@@ -61,12 +88,12 @@ Not (yet!) Working. No devices appear at `/dev/spi*`
 <todo>, I think there is a change (patch) needed in one of the allwinner headers to get this working.? it's a little unclear at present.
 
 ## Other:
-CPU temperature sensor: `apt install lm-sensors`, then try:
+Onboard CPU temperature sensor: `apt install lm-sensors`, then try:
 ```console
 $ sensors
 cpu_thermal-virtual-0
 Adapter: Virtual device
-temp1:        +19.4°C  
+temp1:        +19.4°C
 ```
 **HOWEVER** : this is nonsense.. I'm testing and the attached BME280 sensor is showing room temp as 22C..
 - check out the device tree, maybe a bad offset. Or some kind of calibration/reference voltage needed?
