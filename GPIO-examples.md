@@ -4,29 +4,15 @@ This guide assumes you have a correctly installed and set up board, with the cor
 *Caveat:* notes here are biased towards Python usage, since that is what I will be using in my projects.
 
 ## General Purpose GPIO (digital read/write)
+**You do not need to use a custom Device Tree in order to use digital IO**
+* The 'default' device tree for the MQ pro has 26 free pins to use! 
+
 Look at the great guide here: https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
 
 It does a better job of explaining this than I can do in a short guide.
 
-?? *todo*; My own example of Controlling using python + lgpio.
-
-### Status LED notes:
-The onboard (blue) status LED is attached to gpio `PD18`, and can be controlled via the sys tree:
-
-`$ sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
-
-`$ sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
-
-You can make it flash as network traffic is seen with:
-
-`$ sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
-
-Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds/blue\:status/trigger` shows a list and the current selection. Most do not work or are not very useful; ymmv.
-- `PD18` can also be re-mapped to `pwm-2` in a modified device tree if you want to manually control the LED and vary it's brightness.
-- PD18 is also used as the LED_PWM pin on the DSI/LVDS output
-
 ## PWM
-**working**, There are eight PWM timers available and GPIO pins can be mapped to these.
+**working**, There are eight PWM timers available and GPIO pins can be mapped to these in a custom device tree
 - The available mappings are somewhat limited, see the diagram in the main README to determine which pins on the GPIO connector can be used.
 - The example below uses (legacy) `/sys/class` control, which in turn needs root access. PWM control from userland seems like a WIP for linux at present.
 - I have not (yet) investigated using this via `lgpio` in Python.
@@ -102,12 +88,34 @@ $ source bme-env/bin/activate
 ```
 
 ## SPI
-Not (yet!) Working. No devices appear at `/dev/spi*`
-<todo>, I think there is a change (patch) needed in one of the allwinner headers to get this working.? it's a little unclear at present.
+**Working?**: When I enable SPI1 in the device tree nodes a device at is registered at /sys/devices/platform/soc/4026000.spi/, it lists it's driver (correctly) as sun6i-spi and is a bus master.
+* Kernel drivers that use spi via pinctl should be able to use this.
+* But no block device appears at /dev/spi*.
+  * Normally spi-tools provides userland support via the /dev/spi* device.
+* I do not plan to use SPI so I have not tested further.
 
-## Other:
-Onboard CPU temperature sensor: `apt install lm-sensors`, then try:
+---------------------------------------------------------
+
+# Extra!
+## Status LED:
+The onboard (blue) status LED is attached to gpio `PD18`, and can be controlled via the sys tree:
+
+`$ sudo sh -c "echo 1 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn on
+
+`$ sudo sh -c "echo 0 > /sys/devices/platform/leds/leds/blue\:status/brightness"` to turn off
+
+You can make it flash as network traffic is seen with:
+
+`$ sudo sh -c "echo phy0rx > /sys/devices/platform/leds/leds/blue\:status/trigger"`
+
+Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds/blue\:status/trigger` shows a list and the current selection. Most do not work or are not very useful; ymmv.
+- `PD18` can also be re-mapped to `pwm-2` in a modified device tree if you want to manually control the LED and vary it's brightness.
+- PD18 is also used as the LED_PWM pin on the DSI/LVDS output
+
+
+## Onboard CPU temperature sensor:
 ```console
+$ sudo apt install lm-sensors
 $ sensors
 cpu_thermal-virtual-0
 Adapter: Virtual device
