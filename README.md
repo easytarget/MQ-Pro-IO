@@ -158,12 +158,12 @@ This adds a new custom entry for the MQ Pro based on the default LicheeRV defini
 
 Make this the default with:
 ```console
-ubuntu@ubuntu:~$ sudo echo 'MangoPI MQ pro' > /etc/flash-kernel/machine
+$ sudo echo 'MangoPI MQ pro' > /etc/flash-kernel/machine
 ```
 We now apply this by running `flash-kernel` manually.
 * *flash-kernel* will also be run automatically by `apt` and `dpkg` whenever kernel images are (re)installed.
 ```console
-ubuntu@ubuntu:~$ sudo flash-kernel
+$ sudo flash-kernel
 Using DTB: allwinner/sun20i-d1-mangopi-mq-pro.dtb
 Installing /lib/firmware/6.8.0-41-generic/device-tree/allwinner/sun20i-d1-mangopi-mq-pro.dtb into /boot/dtbs/6.8.0-41-generic/allwinner/sun20i-d1-mangopi-mq-pro.dtb
 Taking backup of sun20i-d1-mangopi-mq-pro.dtb.
@@ -215,10 +215,12 @@ $ sudo systemctl enable --now mqpro-status-led.service
 ```
 The Status LED should now be continually flashing with Network activity, there is more on controlling this below.
 
-## Bask in glory!
-Congratulations! 🎉
+## Bask in glory! 🎉
+Congratulations! 
 
-You now have a small Risc-V server that should run and be updated for several years. What you do with it is up to you!
+You now have a small Risc-V server that should run and be updated for several years.
+* What you do with it is up to you!
+* If you want to do GPIO, read on..
 
 --------------------------------------------------------------------
 
