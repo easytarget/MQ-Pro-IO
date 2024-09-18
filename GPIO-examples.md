@@ -31,24 +31,38 @@ Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds
 - The example below uses (legacy) `/sys/class` control, which in turn needs root access. PWM control from userland seems like a WIP for linux at present.
 - I have not (yet) investigated using this via `lgpio` in Python.
 
+The following needs to be run as root. It uses `pwm2` (the `lora` example device tree attaches this to pin 31 on the GPIO connector).
+
+First, export the PWM interface:
+```
+# echo 2 > /sys/class/pwm/pwmchip0/export
+```
+- The node for the interface wil appear at `/sys/class/pwm/pwmchip0/pwm2/`
+
+Set a default period (10μs) and duty cycle (5μs, 50%):
+```
+# echo 10000 > /sys/class/pwm/pwmchip0/pwm2/period`
+# echo 5000 > /sys/class/pwm/pwmchip0/pwm2/duty_cycle`
+```
+After setting the default you can enable it with:
+```
+# echo 1 > /sys/class/pwm/pwmchip0/pwm2/enable`
+```
+You can stop and detach the interface with: `# echo 2 > /sys/class/pwm/pwmchip0/unexport`
+
 The following is a shell script that implements a crude LED fader:
 
-The following needs to be run as root. It uses `pwm2` (the `lora` example device tree attaches this to pin 37 on the GPIO connector), you can change this as appropriate.
-
-First, export the PWM interface: `echo 2 > /sys/class/pwm/pwmchip0/export`
-- The node for the interface wil appear at `/sys/class/pwm/pwmchip0/pwm2/`
-Ensure it is enabled with: `echo 1 > /sys/class/pwm/pwmchip0/pwm2/enable`
-- You can stop and detach the interface with: `echo 2 > /sys/class/pwm/pwmchip0/unexport`
 ```bash
 #!/bin/bash
 # PWM silly fader
 #
-pwm="/sys/class/pwm/pwmchip0/pwm1"
+pwm="/sys/class/pwm/pwmchip0/pwm2"
 
 echo normal > $pwm/polarity
 echo 10000 > $pwm/period
+echo 1 > $pwm/enable
 while true ; do
-    for p in 40 100 400 1000 4000 10000 4000 1000 400 100 40 0 ; do
+    for p in 40 100 400 1000 4000 10000 6000 1200 600 120 60 0 ; do
         echo -n "."
         echo $p > $pwm/duty_cycle
         sleep 0.25

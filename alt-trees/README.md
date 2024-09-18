@@ -13,7 +13,7 @@ EG any changes to the upstream `sun20i-d1-mangopi-mq-pro.dts` source needs to be
 The authors personal advice is to use this only if needed; or as a learning excercise.
 
 ## SPI and I2C
-[SPI plus I2C interfaces](./spi_i2c)
+[SPI plus I2C interfaces](./spi-i2c)
 * 1x SPI
 * 4x I2C
 * 3x UART (plus the console uart)

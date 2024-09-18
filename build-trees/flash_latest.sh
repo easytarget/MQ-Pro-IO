@@ -1,13 +1,12 @@
 #!/bin/bash
-# Takes a list of dts files for the specified architecture and emits appropriate compiled dtb files for use in customised deviceTree setups.
+# Allows the user to choose a kernel version and copies .dtb files to /etc/flash-kernel
+# - defaults to current highest available kernel version
 #
 
-dtc=/usr/bin/dtc
 cdir=`pwd`
 versions=`dpkg --list | grep linux-image-[0-9].* | cut -d" " -s -f 3 | sed s/^linux-image-// | sort -V`
 current=`/usr/bin/uname -r`
-revision=`echo $versions | tail -1`
-out=./latest
+out=/etc/flash-kernel/dtbs
 
 echo -e "\nAvailable kernels:"
 option=0
@@ -17,7 +16,7 @@ for ver in $versions ; do
     klist[$option]=$ver
     echo -n "  [$option]  $ver"
     if [ $ver == $current ] ; then
-        echo " - current running kernel"
+        echo " - currently running kernel"
     else
         echo
     fi
@@ -33,25 +32,24 @@ if [ -z "$revision" ] ; then
 fi
 
 if [ -d "$revision" ]; then
-    echo "Cleaning '$out' and creating new links to device tree binaries in '$revision'"
-    mkdir -p $out
-    rm -f $out/*.dtb
+    echo "Cleaning '$out/' and copying in device tree binaries from '$revision/'"
+    sudo rm -f "$out/*.dtb" "$out/source"
 else
-    echo "No builds for selected kernel version: $revision"
+    echo "No builds found for selected kernel version: $revision"
     echo "  Try running ./make_trees.sh to generate them"
     exit 1
 fi
 
-for file in `ls $revision/*.dtb`; do
-    link=`echo "$file" | sed "s/$revision\/$revision-//g"`
-    echo "  $out/$link --> $cdir/$file"
-    ln -sf "$cdir/$file" "$out/$link"
+for file in `cd "$revision" ; ls *.dtb`; do
+    echo "  $cdir/$revision/$file --> $out/$file"
+    sudo cp "$cdir/$revision/$file" "$out"
 done
 
-# Test for link in /etc/flash-kernel/dtbs ?
+# Add a link to the output folder..
+sudo ln -s "$cdir/$revision" "$out/source"
 
 echo
-read -p "Run 'flash-kernel' to apply linked device tree (requires sudo)? [Y]: " choice
+read -p "Run 'flash-kernel' to apply device tree? [Y]: " choice
 if [[ "$choice" == [Yy]* ]] || [ -z "$choice" ] ; then
     sudo flash-kernel
     echo -e "\nIf flash-kernel was successful and configured properly the new device tree will be used after reboot"

@@ -45,9 +45,9 @@ for revision in $versions ; do
     cd $revision
     for file in `ls *.dts`; do
         out=${file/.dts/.dtb}
-        echo "  $revision/$file -> $revision/$revision-$out"
-        $dtc $file > $revision-$out
+        echo "  $revision/$file -> $revision/$out"
+        $dtc $file > $out
     done
 done
 
-echo -e "\nSuccess. Consider running 'link-latest.sh' to make permanent (see docs)"
+echo -e "\nSuccess. Consider running 'flash_latest.sh' to make permanent (see docs)"

@@ -211,18 +211,6 @@
         pins = "PB4", "PB5";
         function = "uart5";
     };
-
-    /omit-if-no-ref/
-    pwm1_pd17_pin: pwm1-pd17-pin {
-        pins = "PD17";
-        function = "pwm1";
-    };
-};
-
-&pwm {
-	pinctrl-0 = <&pwm1_pd17_pin>;
-	pinctrl-names = "default";
-	status = "okay";
 };
 
 &spi1 {
@@ -237,7 +225,6 @@
 	status = "okay";
 };
 
-/* disabled
 &i2c1 {
 	pinctrl-0 = <&i2c1_pb4_pins>;  // can conflict uart5
 	pinctrl-names = "default";
@@ -250,18 +237,19 @@
 	status = "okay";
 };
 
+/* disabled
 &i2c2 {
 	pinctrl-0 = <&i2c2_pc0_pins>;  // can conflict uart2
 	pinctrl-names = "default";
 	status = "okay";
 };
+*/
 
 &i2c3 {
 	pinctrl-0 = <&i2c3_pe16_pins>;
 	pinctrl-names = "default";
 	status = "okay";
 };
-*/
 
 &uart0 {
 	pinctrl-0 = <&uart0_pb8_pins>;
@@ -283,26 +271,26 @@
 	};
 };
 
-/* Disabled
 &uart2 {
     pinctrl-0 = <&uart2_pc0_pins>;
     pinctrl-names = "default";
     status = "okay";
 };
 
+/* disabled
 &uart3 {
     uart-has-rtscts;
     pinctrl-0 = <&uart3_pd10_pins>, <&uart3_pd13_rts_cts_pins>;  // conflicts spi1
     pinctrl-names = "default";
     status = "okay";
 };
+*/
 
 &uart3 {
     pinctrl-0 = <&uart3_pb6_pins>;
     pinctrl-names = "default";
     status = "okay";
 };
-*/
 
 &uart4 {
     pinctrl-0 = <&uart4_pb2_pins>;
@@ -310,7 +298,7 @@
     status = "okay";
 };
 
-/* Disabled
+/* disabled
 &uart5 {
     pinctrl-0 = <&uart5_pb4_pins>;  // conflicts i2c1
     pinctrl-names = "default";
