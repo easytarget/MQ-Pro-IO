@@ -26,8 +26,8 @@ Gpio Header:
                    free (42)  PB10  29 --o o-- 30  gnd
                    free (43)  PB11  31 --o o-- 32  PC0   free (64)
                    free (44)  PB12  33 --o o-- 34  gnd
-                   free (38)   PB6  35 --o o-- 36  PB2   uart4.tx (2501000.serial:34)
-                  free (113)  PD17  37 --o o-- 38  PB3   uart4.rx (2501000.serial:35)
+                   free (38)   PB6  35 --o o-- 36  PB2   free (34)
+                  free (113)  PD17  37 --o o-- 38  PB3   free (35)
                                gnd  39 --o o-- 40  PB4   free (36)
 
 Other gpio outputs of interest:

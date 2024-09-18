@@ -5,8 +5,8 @@ Designed to mimic the standard PI gpio assignments for use with PI HAT's
   * i2c3 is on the same pins as I2C-0 on the Pi (normally reserved as the Pi EEPROM Data pins)
 
 In addition it:
-* Brings uart4 out on pins 36 and 38 (needed on my LoRa HAT to leave the Serial pins free..)
-* Has 3 PWM channels for status LED's
+* Brings uart4 out on pins 36 and 38 (so I can leave the console free)
+* Has 4 PWM channels for a RGB status led, and I2C screen brightness
 
 
 Nb: screen is https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)
@@ -22,7 +22,7 @@ Gpio Header:
                                gnd   9 --o o-- 10  PB9   uart0.rx (2500000.serial:41)
                   free (117)  PD21  11 --o o-- 12  PB5   free (37)
                   free (118)  PD22  13 --o o-- 14  gnd
-                   free (32)   PB0  15 --o o-- 16  PB1   free (33)
+                   free (32)   PB0  15 --o o-- 16  PB1   pwm4 (2000c00.pwm:33)
                                3v3  17 --o o-- 18  PD14  spi1.hold (4026000.spi:110)
  spi1.mosi (4026000.spi:108)  PD12  19 --o o-- 20  gnd
  spi1.miso (4026000.spi:109)  PD13  21 --o o-- 22  PC1   free (65)
