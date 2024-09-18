@@ -1,10 +1,12 @@
 # Alternate device tree Examples:
 Each folder contains a `.dts` file and a README showing the GPIO pin mappings.
 
-Copy the desired `.dts` file to the [build-trees](../build-trees) folder and follow the readme there to build the device-tree binaries.
+## Use
+Copy the desired `.dts` file(s) to the [build-trees](../build-trees) folder and follow the readme there to build the device-tree binaries.
 
-There are instructions at the end of that document on how you can use a custom `.dtb` and make it permanent across reboots and kernel upgrades.
+There are instructions at the end of that document on how to make this permanent across reboots and kernel upgrades, some example flash-kernel database entries are given below for convenience.
 
+## Caveat
 The issue with using these trees is that **if** the upstream device tree or includes is modified you need to manually rebuild these trees.
 
 EG any changes to the upstream `sun20i-d1-mangopi-mq-pro.dts` source needs to be detected and applied too. You need to examine file histories to do this.
@@ -39,7 +41,7 @@ EG any changes to the upstream `sun20i-d1-mangopi-mq-pro.dts` source needs to be
 * 2x I2C
 * 12 unassigned GPIO pins
 
-### Example `/etc/flash-kernel/db` entries
+#### Example `/etc/flash-kernel/db` entries
 ```text
 # Custom kernels
 
