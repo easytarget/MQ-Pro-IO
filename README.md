@@ -30,7 +30,7 @@ The D1 used in the MQ Pro also supports a number of internal interfaces, eg PWM 
 
 Overlays are easiest to use; but are not **yet** covered by this guide. I intend to get them working in the future but time and enthusiasm make this a low priority for me. (watch this space..)
 
-Instead, there is discussion of device trees, pin assignment, and a guide + tooling to build and maintain a custom Device Tree that exposes the interfaces you need. This [comes after](#device_trees) the Install guide.
+Instead, there is discussion of device trees, pin assignment, and a guide + tooling to build and maintain a custom Device Tree that exposes the interfaces you need. This [comes after](#device-trees) the Install guide.
 
 -----------------------------
 
