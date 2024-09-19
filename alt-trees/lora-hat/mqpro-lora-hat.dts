@@ -211,10 +211,106 @@
         pins = "PB4", "PB5";
         function = "uart5";
     };
+
+    /omit-if-no-ref/
+    pwm0_pb5_pin: pwm0-pb5-pin {
+        pins = "PB5";
+        function = "pwm0";
+    };
+
+    /omit-if-no-ref/
+    pwm0_pb12_pin: pwm0-pb12-pin {
+        pins = "PB12";
+        function = "pwm0";
+    };
+
+    /omit-if-no-ref/
+    pwm0_pg12_pin: pwm0-pg12-pin {
+        pins = "PG12";
+        function = "pwm0";
+    };
+
+    /omit-if-no-ref/
+    pwm1_pb6_pin: pwm1-pb6-pin {
+        pins = "PB6";
+        function = "pwm1";
+    };
+
+    /omit-if-no-ref/
+    pwm1_pd17_pin: pwm1-pd17-pin {
+        pins = "PD17";
+        function = "pwm1";
+    };
+
+    /omit-if-no-ref/
+    pwm2_pb11_pin: pwm2-pb11-pin {
+        pins = "PB11";
+        function = "pwm2";
+    };
+
+    /omit-if-no-ref/
+    pwm2_pg13_pin: pwm2-pg13-pin {
+        pins = "PG13";
+        function = "pwm2";
+    };
+
+    /omit-if-no-ref/
+    pwm3_pb0_pin: pwm3-pb0-pin {
+        pins = "PB0";
+        function = "pwm3";
+    };
+
+    /omit-if-no-ref/
+    pwm4_pb1_pin: pwm4-pb1-pin {
+        pins = "PB1";
+        function = "pwm4";
+    };
+
+    /omit-if-no-ref/
+    pwm5_pb8_pin: pwm5-pb8-pin {
+        pins = "PB8";
+        function = "pwm5";
+    };
+
+    /omit-if-no-ref/
+    pwm5_pd21_pin: pwm5-pd21-pin {
+        pins = "PD21";
+        function = "pwm5";
+    };
+
+    /omit-if-no-ref/
+    pwm6_pb9_pin: pwm6-pb9-pin {
+        pins = "PB9";
+        function = "pwm6";
+    };
+
+    /omit-if-no-ref/
+    pwm7_pb10_pin: pwm7-pb10-pin {
+        pins = "PB10";
+        function = "pwm7";
+    };
+
+    /omit-if-no-ref/
+    pwm7_pd22_pin: pwm7-pd22-pin {
+        pins = "PD22";
+        function = "pwm7";
+    };
+
+    /omit-if-no-ref/
+    pwm7_pe16_pin: pwm7-pe16-pin {
+        pins = "PE16";
+        function = "pwm7";
+    };
+};
+
+&pwm {
+	pinctrl-0 = <&pwm0_pb12_pin>, <&pwm1_pb6_pin>, <&pwm2_pb11_pin>, <&pwm4_pb1_pin>;
+	pinctrl-names = "default";
+	status = "okay";
 };
 
 &spi1 {
-	pinctrl-0 = <&spi1_pd_pins>;  // conflicts uart3
+	pinctrl-0 = <&spi1_pd_pins>;  // can conflict uart3
 	pinctrl-names = "default";
 	status = "okay";
 };
@@ -227,29 +323,33 @@
 
 /* disabled
 &i2c1 {
-	pinctrl-0 = <&i2c1_pb4_pins>;  // conflicts uart5
+	pinctrl-0 = <&i2c1_pb4_pins>;  // can conflict uart5
 	pinctrl-names = "default";
 	status = "okay";
 };
+*/
 
+/* disabled
 &i2c2 {
 	pinctrl-0 = <&i2c2_pb0_pins>;
 	pinctrl-names = "default";
 	status = "okay";
 };
+*/
 
+/* disabled
 &i2c2 {
-	pinctrl-0 = <&i2c2_pc0_pins>;  // conflicts uart2
+	pinctrl-0 = <&i2c2_pc0_pins>;  // can conflict uart2
 	pinctrl-names = "default";
 	status = "okay";
 };
+*/
 
 &i2c3 {
 	pinctrl-0 = <&i2c3_pe16_pins>;
 	pinctrl-names = "default";
 	status = "okay";
 };
-*/
 
 &uart0 {
 	pinctrl-0 = <&uart0_pb8_pins>;
@@ -271,20 +371,24 @@
 	};
 };
 
-/* Disabled
+/* disabled
 &uart2 {
     pinctrl-0 = <&uart2_pc0_pins>;
     pinctrl-names = "default";
     status = "okay";
 };
+*/
 
+/* disabled
 &uart3 {
     uart-has-rtscts;
     pinctrl-0 = <&uart3_pd10_pins>, <&uart3_pd13_rts_cts_pins>;  // conflicts spi1
     pinctrl-names = "default";
     status = "okay";
 };
+*/
 
+/* disabled
 &uart3 {
     pinctrl-0 = <&uart3_pb6_pins>;
     pinctrl-names = "default";
@@ -298,7 +402,7 @@
     status = "okay";
 };
 
-/* Disabled
+/* disabled
 &uart5 {
     pinctrl-0 = <&uart5_pb4_pins>;  // conflicts i2c1
     pinctrl-names = "default";
