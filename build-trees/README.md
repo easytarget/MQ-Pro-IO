@@ -1,6 +1,6 @@
 # Building and installing custom device trees.
 
-This folder contains a `make-trees` script that can build device tree source (`.dts`) files against the correct upstream headers and device tree includes.
+This folder contains a `make_dtbs` script that can build device tree source (`.dts`) files against the correct upstream headers and device tree includes.
 
 ## Preparation / requirements
 
@@ -72,14 +72,14 @@ A full-on tutorial for device tree editing is far beyond the scope of both this 
 
 ## Compile the mq-pro dts with the current kernel headers
 
-To compile all the includes and sources simply run `make-trees.sh`.
+To compile all the includes and sources simply run `make_dtbs.sh`.
 
 This will:
 * Pre-compile all the source and include files in the current folder into the output folder using the correct kernel headers.
 * In the output folder it then compiles *all* the `.dts` files present.
 
 ```console
-$ ./make_dtb.sh
+$ ./make_dtbs.sh
 Building for kernels: 6.8.0-41-generic
 
 Cleaning existing 6.8.0-41-generic build directory
