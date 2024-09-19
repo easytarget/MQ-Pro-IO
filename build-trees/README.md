@@ -168,3 +168,120 @@ It is good practice to keep the build repo and (periodically) update the dtb whe
 
 Device Tree that is used in the official armbian image?
 - https://github.com/smaeul/u-boot/tree/329e94f16ff84f9cf9341f8dfdff7af1b1e6ee9a/arch/riscv/dts
+
+
+
+------------------
+```console
+owen@iris:~/MQ-Pro-IO/build-trees$ cat /etc/flash-kernel/db 
+# To override fields include the Machine field and the fields you wish to
+# override.
+#
+# e.g. to override Boot-Device on the Dreamplug to sdb rather than sda
+#
+#Machine: Globalscale Technologies Dreamplug
+#Boot-Device: /dev/sdb1
+
+Machine: MangoPI MQ pro
+Kernel-Flavors: any
+DTB-Id: allwinner/sun20i-d1-mangopi-mq-pro.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+
+# Custom project entry
+Machine: My Project
+Kernel-Flavors: any
+DTB-Id: custom/my-project.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+
+# Custom kernels
+
+Machine: MQpro HAT
+Kernel-Flavors: any
+DTB-Id: custom/mqpro-hat.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+
+Machine: MQpro LoRa HAT
+Kernel-Flavors: any
+DTB-Id: custom/mqpro-lora-hat.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+
+Machine: MQpro Serial
+Kernel-Flavors: any
+DTB-Id: custom/mqpro-serial.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+
+Machine: MQpro SPI I2C
+Kernel-Flavors: any
+DTB-Id: custom/mqpro-spi-i2c.dtb
+Boot-Script-Path: /boot/boot.scr
+U-Boot-Script-Name: bootscr.uboot-generic
+Required-Packages: u-boot-tools
+
+owen@iris:~/MQ-Pro-IO/build-trees$ cat /etc/flash-kernel/machine
+My Project
+owen@iris:~/MQ-Pro-IO/build-trees$ ./make_dtb.sh 
+
+Building for kernels: 6.8.0-41-generic, 6.8.0-44-generic
+
+Cleaning existing 6.8.0-41-generic build directory
+Cleaning existing 6.8.0-44-generic build directory
+
+Compiling against headers for 6.8.0-41-generic
+Precompiling all includes in build root into 6.8.0-41-generic build directory
+  sun20i-common-regulators.dtsi -> 6.8.0-41-generic/sun20i-common-regulators.dtsi
+  sun20i-d1.dtsi -> 6.8.0-41-generic/sun20i-d1.dtsi
+  sun20i-d1s.dtsi -> 6.8.0-41-generic/sun20i-d1s.dtsi
+  sunxi-d1-t113.dtsi -> 6.8.0-41-generic/sunxi-d1-t113.dtsi
+  sunxi-d1s-t113.dtsi -> 6.8.0-41-generic/sunxi-d1s-t113.dtsi
+Precompiling all sources in build root into 6.8.0-41-generic build directory
+  my-project.dts -> 6.8.0-41-generic/my-project.dts
+  sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts
+Compiling all device tree sources in 6.8.0-41-generic build directory
+  6.8.0-41-generic/my-project.dts -> 6.8.0-41-generic/my-project.dtb
+  6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dtb
+
+Compiling against headers for 6.8.0-44-generic
+Precompiling all includes in build root into 6.8.0-44-generic build directory
+  sun20i-common-regulators.dtsi -> 6.8.0-44-generic/sun20i-common-regulators.dtsi
+  sun20i-d1.dtsi -> 6.8.0-44-generic/sun20i-d1.dtsi
+  sun20i-d1s.dtsi -> 6.8.0-44-generic/sun20i-d1s.dtsi
+  sunxi-d1-t113.dtsi -> 6.8.0-44-generic/sunxi-d1-t113.dtsi
+  sunxi-d1s-t113.dtsi -> 6.8.0-44-generic/sunxi-d1s-t113.dtsi
+Precompiling all sources in build root into 6.8.0-44-generic build directory
+  my-project.dts -> 6.8.0-44-generic/my-project.dts
+  sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-44-generic/sun20i-d1-mangopi-mq-pro.dts
+Compiling all device tree sources in 6.8.0-44-generic build directory
+  6.8.0-44-generic/my-project.dts -> 6.8.0-44-generic/my-project.dtb
+  6.8.0-44-generic/sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-44-generic/sun20i-d1-mangopi-mq-pro.dtb
+
+Success. Consider running 'flash_latest.sh' to make permanent (see docs)
+owen@iris:~/MQ-Pro-IO/build-trees$ ./flash_latest.sh 
+
+Available kernels:
+  [1]  6.8.0-41-generic
+  [2]  6.8.0-44-generic - currently running kernel
+Which kernel to link? [2]: 
+
+Cleaning '/etc/flash-kernel/dtbs/' and copying in device tree binaries from '6.8.0-44-generic/'
+  /home/owen/MQ-Pro-IO/build-trees/6.8.0-44-generic/my-project.dtb --> /etc/flash-kernel/dtbs/my-project.dtb
+  /home/owen/MQ-Pro-IO/build-trees/6.8.0-44-generic/sun20i-d1-mangopi-mq-pro.dtb --> /etc/flash-kernel/dtbs/sun20i-d1-mangopi-mq-pro.dtb
+Run 'flash-kernel' to apply device tree? [Y]: 
+
+Using DTB: custom/my-project.dtb
+Installing /etc/flash-kernel/dtbs/my-project.dtb into /boot/dtbs/6.8.0-44-generic/custom/my-project.dtb
+Taking backup of my-project.dtb.
+Installing new my-project.dtb.
+System running in EFI mode, skipping.
+
+If flash-kernel was successful and configured properly the new device tree will be used after reboot
+```

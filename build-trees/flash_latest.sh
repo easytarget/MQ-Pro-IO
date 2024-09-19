@@ -24,6 +24,7 @@ done
 
 read -p "Which kernel to link? [$option]: " choice
 if [ -z "$choice" ] ; then choice=$option ; fi
+echo
 
 revision=${klist[$choice]}
 if [ -z "$revision" ] ; then
@@ -32,8 +33,8 @@ if [ -z "$revision" ] ; then
 fi
 
 if [ -d "$revision" ]; then
-    echo "Cleaning '$out/' and copying in device tree binaries from '$revision/'"
-    sudo rm -f "$out/*.dtb" "$out/source"
+    echo -e "Cleaning '$out/' and copying in device tree binaries from '$revision/'"
+    sudo rm -f $out/*.dtb $out/source
 else
     echo "No builds found for selected kernel version: $revision"
     echo "  Try running ./make_trees.sh to generate them"
@@ -48,11 +49,12 @@ done
 # Add a link to the output folder..
 sudo ln -s "$cdir/$revision" "$out/source"
 
-echo
 read -p "Run 'flash-kernel' to apply device tree? [Y]: " choice
 if [[ "$choice" == [Yy]* ]] || [ -z "$choice" ] ; then
+    echo
     sudo flash-kernel
     echo -e "\nIf flash-kernel was successful and configured properly the new device tree will be used after reboot"
+else
+    echo "The new device tree will be applied the next time flash-kernel is run"
 fi
-echo
 # fin
