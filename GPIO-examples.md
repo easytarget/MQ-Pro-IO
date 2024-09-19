@@ -13,9 +13,10 @@ It does a better job of explaining this than I can do in a short guide.
 
 ## PWM
 **working**, There are eight PWM timers available and GPIO pins can be mapped to these in a custom device tree
-- The available mappings are somewhat limited, see the diagram in the main README to determine which pins on the GPIO connector can be used.
+- *Note: `lgpio` provides a software (bit-bang) PWM solution that can be used on any free pin, and does not need a device tree modification. This may be a better solution for many projects.*
+
+The available hardware PWM mappings are somewhat limited, see the diagram in the main README to determine which pins on the GPIO connector can be used.
 - The example below uses (legacy) `/sys/class` control, which in turn needs root access. PWM control from userland seems like a WIP for linux at present.
-- I have not (yet) investigated using this via `lgpio` in Python.
 
 The following needs to be run as root. It uses `pwm2` (the `lora` example device tree attaches this to pin 31 on the GPIO connector).
 
@@ -73,6 +74,8 @@ $ sudo usermod -a -G i2c <username>
 # Create virtualenv in a directory './bme-env' and activate it (exit with `deactivate`, removing the directory+contents deletes the venv)
 $ python3 -m venv bme-env
 $ source bme-env/bin/activate
+
+# Install the sensor library and dependencies
 (bme-env) $ pip install --upgrade pip
 (bme-env) $ pip install --upgrade smbus-cffi bme280
 
@@ -88,8 +91,9 @@ $ source bme-env/bin/activate
 ```
 
 ## SPI
-**Working?**: When I enable SPI1 in the device tree nodes a device at is registered at /sys/devices/platform/soc/4026000.spi/, it lists it's driver (correctly) as sun6i-spi and is a bus master.
-* Kernel drivers that use spi via pinctl should be able to use this.
+**Working?**: When I enable SPI1 in the device tree a device is registered at `/sys/devices/platform/soc/4026000.spi/`
+* It lists it's driver (correctly) as `sun6i-spi` and is a bus master.
+* Kernel drivers that use SPI via `pinctl` should be able to use this.
 * But no block device appears at /dev/spi*.
   * Normally spi-tools provides userland support via the /dev/spi* device.
 * I do not plan to use SPI so I have not tested further.
@@ -110,7 +114,7 @@ You can make it flash as network traffic is seen with:
 
 Other control options are available, `$ sudo cat /sys/devices/platform/leds/leds/blue\:status/trigger` shows a list and the current selection. Most do not work or are not very useful; ymmv.
 - `PD18` can also be re-mapped to `pwm-2` in a modified device tree if you want to manually control the LED and vary it's brightness.
-- PD18 is also used as the LED_PWM pin on the DSI/LVDS output
+- `PD18` is also used as the `LED_PWM` pin on the DSI/LVDS output
 
 
 ## Onboard CPU temperature sensor:
@@ -121,5 +125,6 @@ cpu_thermal-virtual-0
 Adapter: Virtual device
 temp1:        +19.4°C
 ```
-**HOWEVER**: This is nonsense.. I'm testing with the board in a enclosure, and the attached BME280 sensor is showing room temp outside the enclosure as 22C, the CPU is not that cold.
-- check out the device tree, maybe a bad offset. Or some kind of calibration/reference voltage needed?
+**HOWEVER**: This is nonsense.. I'm testing with the board in an enclosure; and the attached BME280 sensor is showing room temp outside the enclosure as 22°C.
+- The CPU is definately running hotter than 19° 🤦
+- ¿Check out the device tree, maybe a bad offset. Or some kind of calibration/reference voltage needed?
