@@ -1,6 +1,8 @@
 # specific to this repo
 build-trees/*.dt*
 build-trees/*/*.dt*
+build-overlays/*.dt*
+build-overlays/*/*.dt*
 source/*
 
 # Byte-compiled / optimized / DLL files

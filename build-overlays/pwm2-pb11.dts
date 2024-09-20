@@ -1,0 +1,31 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "widora,mangopi-mq-pro", "allwinner,sun20i-d1";
+
+    /* identification */
+    // part-number = "ADAFRUIT-SPI0";
+
+    /* version */
+    // version = "00A0";
+
+    fragment@0 {
+        target = <&pio>;
+        __overlay__ {
+            pwm2_pb11_pin: pwm2-pb11-pin {
+                pins = "PB11";
+                function = "pwm2";
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&pwm>;
+        __overlay__ {
+            pinctrl-0 = <&pwm0_pb12_pin>;
+            pinctrl-names = "default";
+            status = "okay";
+        };
+    };
+};
