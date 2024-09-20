@@ -62,9 +62,11 @@ See the [kernel guide](https://www.kernel.org/doc/html/latest/driver-api/pwm.htm
 ## I2C
 **Working**: I have read temperature, pressure and humidity from a BME280 sensor connected to pins `3` and `5`.
 
-Install [`pypi:bme280`](https://pypi.org/project/bme280/) and it's requirement `smbus-cffi`.
-* I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing globally.
-* Add the user to the group 'i2c' and re-login.
+Install `i2c-tools` and add your user to the `i2c` group to access the device nodes.
+
+The following is a python based demo that uses [`pypi:bme280`](https://pypi.org/project/bme280/)
+* The BME280 library has a dependency on [`pypi:smbus-cffi`](https://pypi.org/project/smbus-cffi/); which in turn needs the `python-dev` system package.
+* I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing the python libraries globally.
 ```
 $ sudo apt install python3-venv python3-dev i2c-tools
 
