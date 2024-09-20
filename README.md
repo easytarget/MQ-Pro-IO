@@ -218,9 +218,10 @@ The Status LED should now be continually flashing with Network activity, there i
 ## Bask in glory! 🎉
 Congratulations! 
 
-You now have a small Risc-V server that should run and be updated for several years.
+You now have a small risc-v server that should run and be updated for several years.
 * What you do with it is up to you!
-* If you want to do GPIO, read on..
+* If you want to use the GPIO features please check out the [GPIO example](GPIO-examples.md).
+* If you need to use anything more complex than basic Digital pin read/write + software PWM (eg UART, Hardware PWM, I2C, SPI, etc.) please read on..
 
 --------------------------------------------------------------------
 
