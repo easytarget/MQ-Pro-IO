@@ -1,4 +1,4 @@
-# MangoPI MQ Pro Install guide
+ # MangoPI MQ Pro Install guide
 # - Ubuntu Server 24.04.1
 
 The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz CPU, with 1Gb RAM, HDMI and Wifi, in a Pi-Zero form factor Single Board Computer.
@@ -229,19 +229,19 @@ In the install steps above we reconfigure the system to use the correct MangoPI 
 
 A device tree is a file in the `/boot/` area that defines the structure of the hardware provided by the chipset and SBC.
 
-It is used in several places during initial boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file that is compiled into a binary to be loaded during boot.
+It is loaded very early in the boot sequence and used by u-boot to discover storage, console and other devices as needed. Once the linux kernel starts it is used to provision devices such as UART, network, gpu and other hardware. The device tree itself is a source file + includes that are compiled into a single binary file to be loaded during boot.
 
-##### Note:
-In this guide we only replace the device tree used by the kernel when Linux is started in the final stages of boot up. We do not modify the device tree used by U-Boot & SPL, they still use the default (Sipeed Lichee RV) device tree they were compiled against. Because this part of the boot process already works correctly we can avoid the complexity of recompiling these components.
+The 'vanilla', empty, device tree we installed above only enables the console UART on the GPIO connector, no other pins on the connector are assigned.
 
-## Device Tree Overlays (Work In Progress)
-The 'vanilla', empty, device tree we installed above only enables the console UART on the GPIO connector, no other pins are assigned.
+### Device Tree Overlays *are Not Used here*
 
-In order to enable devices (such as UART, I2C, SPI, etc) on the MQ pro's GPIO connector you need to 'add' an assignment to it via a 'Device Tree Overlay'
+One way to enable devices (such as UART, I2C, SPI, etc) on the MQ pro's GPIO connector is via an 'overlay'. This can modify entries in the main tree, and append new ones to it.
 
-**I am working on this but do not (yet) have any working examples**
+Overlays need to be recompiled for each new kernel version, and are a good solution for distributions that want to provide standard customisations for specific hardware.
+* For Instance, the Raspvberry PI foundation [uses them a lot](https://www.raspberrypi.com/documentation/computers/configuration.html#overlays-folder) to allow modifications the their standard GPIO layout.
 
-I will update this guide once I have worked it out;  *in the meantime you can proceed with a full device tree modification* as described below.
+For this guide I am not going with an overlay based solution, the method described below is based on modifying and compiling a full device tree.
+* See issue #7 for tracking, some work has been done on the `overlays` branch too.
 
 ## Roll Your Own Device Tree
 The guide to compiling the tree, scripts to build the them correctly, and link the compiled trees into `/etc/flash_kernel` are in the [build-trees](/build-trees) folder. See the README there for details and examples.
@@ -263,6 +263,8 @@ For examples of **using GPIO** see the seperate [GPIO-examples](/GPIO-examples) 
 
 ## Allwinner D1 GPIO pins
 The **D1** SOC runs at 3v3, and you must not exceed this on any of the GPIO pins. The drive current is also very limited, a maximum of 4mA on any individual pin, and 6mA total across a bank of pins (eg the 12 pins in the `*PB*` bank combined cannot draw more than 6mA!).
+
+The datasheet is being very cautious here, in reality you can drive a few LED's (10 to 20mA each) from the pins. But please be aware that you should limit current drain as much as possible since the stated specification is very low.
 
 Pins are organised into 7 'banks' (*PA*, *PB*, etc to *PG*) of up to 32 pins, but most banks have fewer pins.
 
@@ -369,4 +371,3 @@ Online:
 * https://mangopi.org/mangopi_mqpro
 * https://linux-sunxi.org/MangoPi_MQ-Pro
 * https://github.com/boosterl/awesome-mango-pi-mq-pro
-
