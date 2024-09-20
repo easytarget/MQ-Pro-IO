@@ -12,8 +12,13 @@ Look at the great guide here: https://worldbeyondlinux.be/posts/gpio-on-the-mang
 It does a better job of explaining this than I can do in a short guide.
 
 ## PWM
-**working**, There are eight PWM timers available and GPIO pins can be mapped to these in a custom device tree
-- *Note: `lgpio` provides a software (bit-bang) PWM solution that can be used on any free pin, and does not need a device tree modification. This may be a better solution for many projects.*
+**working**: I have tested using a simple LED attached to a GPIO pin.
+
+**Software PWM**: Does not need a device tree modification
+
+`lgpio` provides a software (bit-bang) PWM solution that can be used on any free pin, and does not need a device tree modification.
+
+**Hardware PWM**: There are eight hardware PWM timers available, these can be mapped to some of the pins on the GPIO connector.
 
 The available hardware PWM mappings are somewhat limited, see the diagram in the main README to determine which pins on the GPIO connector can be used.
 - The example below uses (legacy) `/sys/class` control, which in turn needs root access. PWM control from userland seems like a WIP for linux at present.
