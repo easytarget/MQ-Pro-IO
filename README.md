@@ -328,7 +328,9 @@ This produces a long output that lists all the D1's gpio pins and states, not ju
 ### Functional assignments
 The following shows all the function combinations available on the MQ Pro GPIO connector.
 * **All** pins can also do Digital Input and Output when not assigned to a specific internal interface.
-* I do not list all interface types here, eg SPI (audio) and IR functions are available on GPIO pins but not covered in this guide. Creating overlays and using them is quite possible but I do not need these features and have limited resources, so I leave it as an excercise for others / the future. Sorry..
+* I do not list all interface types here, eg PCM (audio) and IR functions are available on GPIO pins but not covered in this guide.
+  * Creating entries for them is quite possible but I do not need these features and have limited resources, so I leave it as an excercise for others / the future.
+  * Also see the issues list where I have enhancement request issues open for some of these features.
 
 ```text
 Gpio Header:
