@@ -1,4 +1,4 @@
- # MangoPI MQ Pro Install guide
+ # MangoPI MQ Pro Install and GPIO guide
 # - Ubuntu Server 24.04.1
 
 The MQ pro is a single core RISC-V allwinner D1 64bit 1Ghz CPU, with 1Gb RAM, HDMI and Wifi, in a Pi-Zero form factor Single Board Computer.
