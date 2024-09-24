@@ -3,9 +3,14 @@ This guide assumes you have a correctly installed and set up board, with the cor
 
 *Caveat:* notes here are biased towards Python usage, since that is what I will be using in my projects.
 
+## Common
+```
+$ sudo apt install gpiod
+```
+
 ## General Purpose GPIO (digital read/write)
 **You do not need to use a custom Device Tree in order to use digital IO**
-* The 'default' device tree for the MQ pro has 26 free pins to use! 
+* The 'default' device tree for the MQ pro has 26 free pins to use!
 
 Look at the great guide here: https://worldbeyondlinux.be/posts/gpio-on-the-mango-pi/
 
@@ -106,13 +111,13 @@ You can see that interface `0` has a BME280 device at address`0x76`, and a SSD13
 # Python demo
 The following is a demo of using I2C to read data from a BME280 Temperature, Humidity and Pressure sensor, and display ito on a SSD1306 OLED display.
 - It will be expanded with lgpio PWM and pin input/interrupt code later.
-- All the install steps here (both `apt` and `pip`) are tediously slow on the MQ Pro.
+- All the install steps here (making the venv, `apt` and `pip`) are tediously slow on the MQ Pro.
 
 For the demo we need to install some dependencies via `apt`.
 * I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing the python libraries globally.
 ```bash
 # Dependencies needed by pip install.
-$ sudo apt install python3-venv python3-dev python3-lgpio libjpeg-dev liblgpio-dev build-essential
+$ sudo apt install python3-venv python3-dev libjpeg-dev liblgpio-dev swig build-essential
 
 # Create virtualenv at './env' and activate it
 # - exit with `deactivate`
@@ -124,12 +129,14 @@ $ source env/bin/activate
 (env) $ pip install --upgrade pip
 (env) $ pip install --upgrade pimoroni-bme280
 (env) $ pip install --upgrade luma.oled
+# Not yet used in demo: (env) $ pip install --upgrade lgpio
 
 # Run the demo
 (env) $ python GPIO-demo.py
 ```
-....WIP...
-I still need to upload he demo script..
+#### Work In Progress ####
+Demo runs but still needs expanding to demo lgpio and pwm control
+
 
 ---------------------------------------------------------
 

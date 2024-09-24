@@ -32,13 +32,21 @@ bus = SMBus(i2c_bus)
 bme280 = BME280(i2c_addr=bme280_addr, i2c_dev=bus)
 bme280.setup()
 
-while True:
+def read_sensor():
     t = round(bme280.get_temperature(),1)
     h = round(bme280.get_humidity(),1)
     p = round(bme280.get_pressure())
-    out = ' Temp: {}°C\n Humi: {}%\n Pres: {}mb'.format(t,h,p)
+    return t, h, p
+
+# initial reading settles sensor
+_, _, _ = read_sensor()
+
+# loop
+while True:
+    sleep(1)
+    temp, humi, pres = read_sensor()
+    out = ' Temp: {}°C\n Humi: {}%\n Pres: {}mb'.format(temp, humi, pres)
     with canvas(device) as draw:
         draw.rectangle(device.bounding_box, outline="white", fill="black")
         draw.text((26, 12), out, fill="white")
-    print('{} : {}°C, {}%, {}mb'.format(ctime(),t,h,p)
-    sleep(1)
+    print('{} :: {}°C, {}%, {}mb'.format(ctime(),temp, humi, pres))
