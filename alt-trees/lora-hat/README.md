@@ -1,15 +1,13 @@
 # A device tree for my LORA HAT..
 
-Designed to mimic the standard PI gpio assignments for use with PI HAT's
-* i2c0 and spi1 ports are located on the same Pins as the PI I2C-1 and SPI-0 on the PI gpio header
-  * i2c3 is on the same pins as I2C-0 on the Pi (normally reserved as the Pi EEPROM Data pins)
+Designed to mimic the standard PI gpio assignments for use with Raspberry Pi HAT's
+* i2c**0** and spi**1** ports are located on the same GPIO header pins as the Pi's I2C-**1** and SPI-**0**
+* i2c**3** is on the same pins as I2C-0 on the Pi (This is normally reserved as the Pi EEPROM Data pins)
 
 In addition it:
 * Brings uart4 out on pins 36 and 38 (so I can leave the console free)
-* Has 4 PWM channels for a RGB status led, and I2C screen brightness
+* Has 4 PWM channels for a RGB status led, and screen brightness
 
-
-Nb: screen is https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)
 ```
                MangoPI MQ Pro GPIO header (dtb name: MangoPi MQ Pro)
 
