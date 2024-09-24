@@ -65,37 +65,36 @@ done
 See the [kernel guide](https://www.kernel.org/doc/html/latest/driver-api/pwm.html#using-pwms-with-the-sysfs-interface) for the parameters we set to assign and control the pin.
 
 ## I2C
-**Working**: I have read temperature, pressure and humidity from a BME280 sensor connected to pins `3` and `5`.
+**Working**: I have read temperature, pressure and humidity from a BME280 sensor connected to pins `3` and `5`, and output that to a OLED display on the same bus. See the python example below.
 
 Install `i2c-tools` and add your user to the `i2c` group to access the device nodes.
 
 The following is a python based demo that uses [`pypi:bme280`](https://pypi.org/project/bme280/)
-* The BME280 library has a dependency on [`pypi:smbus-cffi`](https://pypi.org/project/smbus-cffi/); which in turn needs the `python-dev` system package.
 * I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing the python libraries globally.
-```
-$ sudo apt install python3-venv python3-dev i2c-tools
-
+```console
+$ sudo apt install i2c-tools
 $ sudo usermod -a -G i2c <username>
-# Log out then in again so that your user now has the `i2c` group membership
-
-# Create virtualenv in a directory './bme-env' and activate it (exit with `deactivate`, removing the directory+contents deletes the venv)
-$ python3 -m venv bme-env
-$ source bme-env/bin/activate
-
-# Install the sensor library and dependencies
-(bme-env) $ pip install --upgrade pip
-(bme-env) $ pip install --upgrade smbus-cffi bme280
-
-# The bme280 library provides a python API, and a commandline tool
-(bme-env) $ which read_bme280
-<cwd>/env/bin/read_bme280
-
-# My bme280 defaults to address 0x76, and I'm using I2C0
-(bme-env) $ read_bme280 --i2c-bus 0 --i2c-address 0x76
-1024.85 hPa
-  56.84 %
-  21.59 C
 ```
+Reboot at his point, after the reboot you should have devices in the `/dev` tree for i2c. Use `i2cdetect` to scan them for attached devices:
+```console
+$ ls -l /dev/i2c*
+crw-rw---- 1 root i2c 89, 0 Sep 23 21:17 /dev/i2c-0
+crw-rw---- 1 root i2c 89, 1 Sep 23 21:17 /dev/i2c-1
+$ i2cdetect -l
+i2c-0	i2c       	mv64xxx_i2c adapter             	I2C adapter
+i2c-1	i2c       	mv64xxx_i2c adapter             	I2C adapter
+$ i2cdetect -y 0
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:                         -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- 3c -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- 76 --                         
+```
+You can see that interface `0` has a BME280 device at address`0x76`, and a SSD1306 OLED screen at `0x3c`.
 
 ## SPI
 **Working?**: When I enable SPI1 in the device tree a device is registered at `/sys/devices/platform/soc/4026000.spi/`
@@ -104,6 +103,35 @@ $ source bme-env/bin/activate
 * But no block device appears at /dev/spi*.
   * Normally spi-tools provides userland support via the /dev/spi* device.
 * I do not plan to use SPI so I have not tested further.
+
+---------------------------------------------------------
+
+# Python demo
+The following is a demo of using I2C to read data from a BME280 Temperature, Humidity and Pressure sensor, and display ito on a SSD1306 OLED display.
+- It will be expanded with lgpio PWM and pin input/interrupt code later.
+- All the install steps here (both `apt` and `pip`) are tediously slow on the MQ Pro.
+
+For the demo we need to install some dependencies, and then I use a virtualenv to install the python libraries:
+```bash
+# Dependencies needed by pip install.
+$ sudo apt install python3-venv python3-dev python3-lgpio libjpeg-dev liblgpio-dev build-essential
+
+# Create virtualenv at './env' and activate it
+# - exit with `deactivate`
+# - removing the `./env` directory+contents deletes the venv
+$ python3 -m venv env
+$ source env/bin/activate
+
+# Upgrade pip then install the libraries we use
+(env) $ pip install --upgrade pip
+(env) $ pip install --upgrade pimoroni-bme280
+(env) $ pip install --upgrade luma.oled
+
+# Run the demo
+(env) $ python GPIO-demo.py
+```
+....WIP...
+I still need to upload he demo script..
 
 ---------------------------------------------------------
 
