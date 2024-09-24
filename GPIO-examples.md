@@ -68,9 +68,6 @@ See the [kernel guide](https://www.kernel.org/doc/html/latest/driver-api/pwm.htm
 **Working**: I have read temperature, pressure and humidity from a BME280 sensor connected to pins `3` and `5`, and output that to a OLED display on the same bus. See the python example below.
 
 Install `i2c-tools` and add your user to the `i2c` group to access the device nodes.
-
-The following is a python based demo that uses [`pypi:bme280`](https://pypi.org/project/bme280/)
-* I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing the python libraries globally.
 ```console
 $ sudo apt install i2c-tools
 $ sudo usermod -a -G i2c <username>
@@ -111,7 +108,8 @@ The following is a demo of using I2C to read data from a BME280 Temperature, Hum
 - It will be expanded with lgpio PWM and pin input/interrupt code later.
 - All the install steps here (both `apt` and `pip`) are tediously slow on the MQ Pro.
 
-For the demo we need to install some dependencies, and then I use a virtualenv to install the python libraries:
+For the demo we need to install some dependencies via `apt`.
+* I am using a [virtual environment](https://docs.python.org/3/tutorial/venv.html), rather than installing the python libraries globally.
 ```bash
 # Dependencies needed by pip install.
 $ sudo apt install python3-venv python3-dev python3-lgpio libjpeg-dev liblgpio-dev build-essential
