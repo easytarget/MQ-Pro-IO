@@ -4,8 +4,10 @@ This guide assumes you have a correctly installed and set up board, with the cor
 *Caveat:* notes here are biased towards Python usage, since that is what I will be using in my projects.
 
 ## Common
+You need to install the GPIOd package to allow access to the raw GPIO devices: 
 ```
 $ sudo apt install gpiod
+$ sudo reboot
 ```
 
 ## General Purpose GPIO (digital read/write)
@@ -67,7 +69,7 @@ while true ; do
     echo
 done
 ```
-See the [kernel guide](https://www.kernel.org/doc/html/latest/driver-api/pwm.html#using-pwms-with-the-sysfs-interface) for the parameters we set to assign and control the pin.
+See the [kernel PWM API guide](https://www.kernel.org/doc/html/latest/driver-api/pwm.html#using-pwms-with-the-sysfs-interface) for the parameters we set to assign and control the pin.
 
 ## I2C
 **Working**: I have read temperature, pressure and humidity from a BME280 sensor connected to pins `3` and `5`, and output that to a OLED display on the same bus. See the python example below.
@@ -77,7 +79,8 @@ Install `i2c-tools` and add your user to the `i2c` group to access the device no
 $ sudo apt install i2c-tools
 $ sudo usermod -a -G i2c <username>
 ```
-Reboot at his point, after the reboot you should have devices in the `/dev` tree for i2c. Use `i2cdetect` to scan them for attached devices:
+Reboot at his point, after the reboot you should have devices in the `/dev` tree for i2c busses. Use `i2cdetect` to scan them for attached devices.
+* Note that the i2c busses are numbered sequentially, not by their hardware number. The Device Tree I am using here has `I2C0` and `I2C3` enabled; but they are named `i2c-0` and `i2c-1` respectively in `/dev`.
 ```console
 $ ls -l /dev/i2c*
 crw-rw---- 1 root i2c 89, 0 Sep 23 21:17 /dev/i2c-0
@@ -96,20 +99,20 @@ $ i2cdetect -y 0
 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 70: -- -- -- -- -- -- 76 --                         
 ```
-You can see that interface `0` has a BME280 device at address`0x76`, and a SSD1306 OLED screen at `0x3c`.
+You can see that interface `i2c-0` has a BME280 device at address`0x76`, and a SSD1306 OLED screen at `0x3c`.
 
 ## SPI
 **Working?**: When I enable SPI1 in the device tree a device is registered at `/sys/devices/platform/soc/4026000.spi/`
 * It lists it's driver (correctly) as `sun6i-spi` and is a bus master.
 * Kernel drivers that use SPI via `pinctl` should be able to use this.
 * But no block device appears at /dev/spi*.
-  * Normally spi-tools provides userland support via the /dev/spi* device.
+  * Normally `spi-tools` provides userland support via the /dev/spi* device.
 * I do not plan to use SPI so I have not tested further.
 
 ---------------------------------------------------------
 
 # Python demo
-The following is a demo of using I2C to read data from a BME280 Temperature, Humidity and Pressure sensor, and display ito on a SSD1306 OLED display.
+The following is a demo using I2C to read data from a BME280 environmental sensor, and display it on a SSD1306 OLED display.
 - It will be expanded with lgpio PWM and pin input/interrupt code later.
 - All the install steps here (making the venv, `apt` and `pip`) are tediously slow on the MQ Pro.
 
@@ -140,8 +143,7 @@ $ source env/bin/activate
 
 This is my test setup; A bme280 and SSD1306 OLED on the I2C bus, a blue LED is on a PWM pin and a pushbutton on a free digital IO pin. The MQ Pro itself is hidden underneath the (blue) LoRa HAT.
 #### Work In Progress ####
-Demo runs but still needs expanding to demo lgpio and pwm control
-
+The demo runs well, but still needs expanding with lgpio and pwm control
 
 ---------------------------------------------------------
 
@@ -170,6 +172,8 @@ cpu_thermal-virtual-0
 Adapter: Virtual device
 temp1:        +19.4°C
 ```
-**HOWEVER**: This is nonsense.. I'm testing with the board in an enclosure; and the attached BME280 sensor is showing room temp outside the enclosure as 22°C.
+**HOWEVER**: This is nonsense.. 
+
+I'm testing with the board in an enclosure; and the attached BME280 sensor is showing room temp outside the enclosure as 22°C.
 - The CPU is definately running hotter than 19° 🤦
 - ¿Check out the device tree, maybe a bad offset. Or some kind of calibration/reference voltage needed?
