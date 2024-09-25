@@ -112,8 +112,8 @@ You can see that interface `i2c-0` has a BME280 device at address`0x76`, and a S
 ---------------------------------------------------------
 
 # Python demo
-The following is a demo using I2C to read data from a BME280 environmental sensor, and display it on a SSD1306 OLED display.
-- It will be expanded with lgpio PWM and pin input/interrupt code later.
+`GPIO-demo.py` is a demo using I2C to read data from a BME280 environmental sensor, and then display it on a SSD1306 OLED display.
+- It will be expanded with hardware PWM and digital pin input/interrupt code later.
 - All the install steps here (making the venv, `apt` and `pip`) are tediously slow on the MQ Pro.
 
 For the demo we need to install some dependencies via `apt`.
