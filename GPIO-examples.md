@@ -129,11 +129,16 @@ $ source env/bin/activate
 (env) $ pip install --upgrade pip
 (env) $ pip install --upgrade pimoroni-bme280
 (env) $ pip install --upgrade luma.oled
-# Not yet used in demo: (env) $ pip install --upgrade lgpio
+(env) $ pip install --upgrade lgpio       # <- Not yet used in demo
 
 # Run the demo
 (env) $ python GPIO-demo.py
 ```
+
+## Hardware
+![my demo rig](reference/GPIO-demo-setup.jpg)
+
+This is my test setup; A bme280 and SSD1306 OLED on the I2C bus, a blue LED is on a PWM pin and a pushbutton on a free digital IO pin. The MQ Pro itself is hidden underneath the (blue) LoRa HAT.
 #### Work In Progress ####
 Demo runs but still needs expanding to demo lgpio and pwm control
 
