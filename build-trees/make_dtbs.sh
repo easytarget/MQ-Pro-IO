@@ -5,7 +5,7 @@
 dtc=/usr/bin/dtc
 
 cdir=`pwd`
-versions=`dpkg --list | grep linux-image-[0-9].* | cut -d" " -s -f 3 | sed s/^linux-image-// | sort -V`
+versions=`dpkg --list | grep linux-image-[0-9].* | cut -d" " -s -f 3 | sed s/^linux-image-// | sort -Vr`
 
 echo -ne "\nBuilding for kernels: "
 echo `echo $versions | sed "s/ /, /g"`
