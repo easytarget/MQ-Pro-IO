@@ -105,7 +105,7 @@ network:
   - The Netplan syntax allows almost any possible Network setup to be preconfigured!
   - See the [Netplan Documentation](https://netplan.readthedocs.io/en/stable/examples/) for lots of examples and the full syntax.
 - After first boot this file will be copied (with some comments) to `/etc/netplan/50-cloud-init.yaml`.
-  - If you made a mistake in the config, or need to change details, edit it in `/etc/netplan/` and use `netplan try` to test the new configuration.
+  - If you made a mistake in the config, or need to change details, edit it (as root) in `/etc/netplan/` and use `sudo netplan try` to test the new configuration.
 
 Unmount the filesystem so that it is synced properly.
 ```text
