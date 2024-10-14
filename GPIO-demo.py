@@ -38,15 +38,20 @@ def read_sensor():
     p = round(bme280.get_pressure())
     return t, h, p
 
-# initial reading settles sensor
+def show_text(s, x, y):
+    with canvas(device) as draw:
+        draw.rectangle(device.bounding_box, outline="white", fill="black")
+        draw.text((x, y), s, fill="white")
+
+# initial reading to settle sensor
 _, _, _ = read_sensor()
+show_text('Initialising..', 36, 26)
+print('Initialising')
 
 # loop
 while True:
     sleep(1)
     temp, humi, pres = read_sensor()
     out = ' Temp: {}°C\n Humi: {}%\n Pres: {}mb'.format(temp, humi, pres)
-    with canvas(device) as draw:
-        draw.rectangle(device.bounding_box, outline="white", fill="black")
-        draw.text((26, 12), out, fill="white")
+    show_text(out, 26, 12)
     print('{} :: {}°C, {}%, {}mb'.format(ctime(),temp, humi, pres))
