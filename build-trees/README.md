@@ -46,7 +46,9 @@ Go for a coffee.. ignore the 'git clone' suggestion.
 - This will use ~1.6Gb of space.. so be prepared.
 
 #### Updating sources
-You can re-run the `apt source` command in this folder and it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
+The `make_dtbs.sh` command used below will offer to update the source tree when run, this shoule be done wnenever a new kernel vesion s being built, but does not need to be re-done after that version has been fetched at least once.
+
+You can also manually re-run the `apt source` command in this folder and it will only download and update as needed, but is still somewhat slow since it verifies the existing downloads when updating.
 
 -------------------------------------------
 # Building the device tree(s)
@@ -61,7 +63,7 @@ Run the build as a normal user (the same user used to fetch the sources above).
 * `.dtb` is the binary compiled device tree, this is what we are building here, and is supplied to the kernel at boot time.
 
 ## device tree sources
-For convenience, the default `sun20i-d1-mangopi-mq-pro.dts` file from the Ubuntu source is also linked here. 
+For convenience, the default `sun20i-d1-mangopi-mq-pro.dts` file from the Ubuntu source is also linked here.
 
 Rather than modifying the default tree you should copy it to a custom name, eg 'my-project.dts'. Or you can copy in examples from the [alt-trees](../alt-trees/) folder.
 
@@ -80,27 +82,35 @@ This will:
 
 ```console
 $ ./make_dtbs.sh
-Building for kernels: 6.8.0-41-generic
+Update source tree (may be slow)? [y/N]:
 
-Cleaning existing 6.8.0-41-generic build directory
+Available kernels:
+  [1]  6.8.0-41-generic
+  [2]  6.8.0-44-generic
+  [3]  6.8.0-47-generic
+  [4]  6.8.0-48-generic - currently running kernel
+Which kernel to build? [4]:
 
-Compiling against headers for 6.8.0-41-generic
-Precompiling all includes in build root into 6.8.0-41-generic build directory
-  sun20i-common-regulators.dtsi -> 6.8.0-41-generic/sun20i-common-regulators.dtsi
-  sun20i-d1.dtsi -> 6.8.0-41-generic/sun20i-d1.dtsi
-  sun20i-d1s.dtsi -> 6.8.0-41-generic/sun20i-d1s.dtsi
-  sunxi-d1-t113.dtsi -> 6.8.0-41-generic/sunxi-d1-t113.dtsi
-  sunxi-d1s-t113.dtsi -> 6.8.0-41-generic/sunxi-d1s-t113.dtsi
-Precompiling all sources in build root into 6.8.0-41-generic build directory
-  my-project.dts -> 6.8.0-41-generic/my-project.dts
-  sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts
-Compiling all device tree sources in 6.8.0-41-generic build directory
-  6.8.0-41-generic/my-project.dts -> 6.8.0-41-generic/my-project.dtb
-  6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dtb
+Building for kernel: 6.8.0-48-generic
+Cleaning existing 6.8.0-48-generic build directory
+
+Compiling against headers for 6.8.0-48-generic
+Precompiling all includes in build root into 6.8.0-48-generic build directory
+  sun20i-common-regulators.dtsi -> 6.8.0-48-generic/sun20i-common-regulators.dtsi
+  sun20i-d1.dtsi -> 6.8.0-48-generic/sun20i-d1.dtsi
+  sun20i-d1s.dtsi -> 6.8.0-48-generic/sun20i-d1s.dtsi
+  sunxi-d1-t113.dtsi -> 6.8.0-48-generic/sunxi-d1-t113.dtsi
+  sunxi-d1s-t113.dtsi -> 6.8.0-48-generic/sunxi-d1s-t113.dtsi
+Precompiling all sources in build root into 6.8.0-48-generic build directory
+  my-project.dts -> 6.8.0-48-generic/my-project.dts
+  sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-48-generic/sun20i-d1-mangopi-mq-pro.dts
+Compiling all device tree sources in 6.8.0-48-generic build directory
+  6.8.0-48-generic/my-project.dts -> 6.8.0-48-generic/my-project.dtb
+  6.8.0-48-generic/sun20i-d1-mangopi-mq-pro.dts -> 6.8.0-48-generic/sun20i-d1-mangopi-mq-pro.dtb
 
 Success. Consider running 'flash_latest.sh' to make permanent (see docs)
 ```
-The `6.8.0-41-generic` folder now has our device tree: `my-project.dtb`
+The `6.8.0-48-generic` folder now has our device tree: `my-project.dtb`
 - We also generate the default device tree, this can be ignored.
 
 The tool builds for *all* the kernels available on the system, not just the running kernel.
@@ -169,21 +179,25 @@ Running *flash-kernel* immediately after this will fail since it cannot yet find
 Run `flash_latest.sh`, this will ask you to confirm which kernel version you want to copy from.
 - It defaults to the current running kernel.
 - When upgrading this allows you to precompile and install the correct DTB in advance before rebooting into the new kernel.
+- It needs root access via `sudo`, (you will be prompted to enter your password if using sudo with a password)
 
 ```console
-$ ./flash_latest.sh 
+$ ./flash_latest.sh
 
 Available kernels:
-  [1]  6.8.0-41-generic - currently running kernel
-Which kernel to link? [1]: 
+  [1]  6.8.0-41-generic
+  [2]  6.8.0-44-generic
+  [3]  6.8.0-47-generic
+  [4]  6.8.0-48-generic - currently running kernel
+Which kernel to link? [4]:
 
-Cleaning '/etc/flash-kernel/dtbs/' and copying in device tree binaries from '6.8.0-41-generic/'
-  /home/owen/MQ-Pro-IO/build-trees/6.8.0-41-generic/my-project.dtb --> /etc/flash-kernel/dtbs/my-project.dtb
-  /home/owen/MQ-Pro-IO/build-trees/6.8.0-41-generic/sun20i-d1-mangopi-mq-pro.dtb --> /etc/flash-kernel/dtbs/sun20i-d1-mangopi-mq-pro.dtb
-Run 'flash-kernel' to apply device tree? [Y]: 
+Cleaning '/etc/flash-kernel/dtbs/' and copying in device tree binaries from '6.8.0-48-generic/'
+  /home/owen/MQ-Pro-IO/build-trees/6.8.0-48-generic/my-project.dtb --> /etc/flash-kernel/dtbs/my-project.dtb
+  /home/owen/MQ-Pro-IO/build-trees/6.8.0-48-generic/sun20i-d1-mangopi-mq-pro.dtb --> /etc/flash-kernel/dtbs/sun20i-d1-mangopi-mq-pro.dtb
 
+Run 'flash-kernel' to apply device tree? [Y]: y
 Using DTB: custom/my-project.dtb
-Installing /etc/flash-kernel/dtbs/my-project.dtb into /boot/dtbs/6.8.0-41-generic/custom/my-project.dtb
+Installing /etc/flash-kernel/dtbs/my-project.dtb into /boot/dtbs/6.8.0-48-generic/custom/my-project.dtb
 Taking backup of my-project.dtb.
 Installing new my-project.dtb.
 System running in EFI mode, skipping.
