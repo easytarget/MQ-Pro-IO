@@ -5,8 +5,16 @@
 dtc=/usr/bin/dtc
 
 cdir=`pwd`
-versions=`dpkg --list | grep linux-image-[0-9].* | cut -d" " -s -f 3 | sed s/^linux-image-// | sort -Vr`
+versions=`dpkg --list | grep linux-image-[0-9].* | cut -d" " -s -f 3 | sed s/^linux-image-// | sort -V`
 current=`/usr/bin/uname -r`
+
+read -p "Update source tree (may be slow)? [y/N]: " choice
+if [ ! -z "$choice" ] ; then
+    if [ "$choice" == 'y' ] ; then
+        cd ../source
+        apt source linux-riscv
+    fi
+fi
 
 echo -e "\nAvailable kernels:"
 option=0
@@ -25,9 +33,11 @@ done
 read -p "Which kernel to build? [$option]: " choice
 if [ -z "$choice" ] ; then
     choice=$option
-    echo "Warning; building older versions amy fail if the source tree includes have changed with more recent kernels"
-    fi
-echo
+else
+    echo
+    echo "WARNING: building older versions may fail if the source tree includes have changed with more recent kernels"
+    echo
+fi
 
 revision=${klist[$choice]}
 if [ -z "$revision" ] ; then
