@@ -1,3 +1,8 @@
+# NOV 25, 2024
+## Building is currently broken with the latest (**-49**) kernel.
+### Ubuntu have updated the dts tree and with a newer include structure and this breaks the current tooling setup.
+### I know how to fix this but it will be a few days before I can apply myself to this.
+
 # Building and installing custom device trees.
 
 This folder contains a `make_dtbs` script that can build device tree source (`.dts`) files against the correct upstream headers and device tree includes.
